@@ -1,8 +1,6 @@
 ## Contributing to xNode
 💙Thank you for taking the time to contribute💙
 
-If you haven't already, join our [Discord channel](https://discord.gg/qgPrHv4)!
-
 ## Pull Requests
 Try to keep your pull requests relevant, neat, and manageable. If you are adding multiple features, split them into separate PRs.
 These are the main points to follow:
