@@ -34,7 +34,7 @@ namespace Knot.Editor
         public static Type[] GetNodeTypes()
         {
             //Get all classes deriving from Node via reflection
-            return GetDerivedTypes(typeof(Knot.Node));
+            return GetDerivedTypes(typeof(Node));
         }
 
         /// <summary> Custom node tint colors defined with [NodeColor(r, g, b)] </summary>
@@ -42,7 +42,7 @@ namespace Knot.Editor
         {
             if (_nodeTint == null)
             {
-                CacheAttributes<Color, Knot.Node.NodeTintAttribute>(ref _nodeTint, x => x.Color);
+                CacheAttributes<Color, Node.NodeTintAttribute>(ref _nodeTint, x => x.Color);
             }
 
             return _nodeTint.TryGetValue(nodeType, out tint);
@@ -55,10 +55,10 @@ namespace Knot.Editor
         {
             icon = null;
             var type = nodeType;
-            while (type != null && typeof(Knot.Node).IsAssignableFrom(type))
+            while (type != null && typeof(Node).IsAssignableFrom(type))
             {
-                object attr = Attribute.GetCustomAttribute(type, typeof(Knot.Node.NodeIconAttribute), false);
-                if (attr is Knot.Node.NodeIconAttribute iconAttribute)
+                object attr = Attribute.GetCustomAttribute(type, typeof(Node.NodeIconAttribute), false);
+                if (attr is Node.NodeIconAttribute iconAttribute)
                 {
                     icon = iconAttribute.Icon;
                     return !string.IsNullOrEmpty(icon);
@@ -75,7 +75,7 @@ namespace Knot.Editor
         {
             if (_nodeWidth == null)
             {
-                CacheAttributes<int, Knot.Node.NodeWidthAttribute>(ref _nodeWidth, x => x.Width);
+                CacheAttributes<int, Node.NodeWidthAttribute>(ref _nodeWidth, x => x.Width);
             }
 
             return _nodeWidth.TryGetValue(nodeType, out width);
@@ -100,7 +100,7 @@ namespace Knot.Editor
             var field = type.GetField(fieldName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             // Search base classes for private fields only. Public fields are found above
-            while (field == null && (type = type.BaseType) != typeof(Knot.Node))
+            while (field == null && (type = type.BaseType) != typeof(Node))
                 field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             return field;
         }

@@ -113,7 +113,7 @@ namespace Knot.Editor
             return true;
         }
 
-        public static bool TryGetGraphPortColor(Knot.NodePort port, out Color color)
+        public static bool TryGetGraphPortColor(NodePort port, out Color color)
         {
             color = default;
             if (port == null) return false;
@@ -121,7 +121,7 @@ namespace Knot.Editor
             {
                 var field = port.Node.GetType().GetFieldInfo(port.FieldName);
                 var fieldAttr = field != null
-                    ? field.GetCustomAttribute<Knot.Node.GraphPortColorAttribute>(true)
+                    ? field.GetCustomAttribute<Node.GraphPortColorAttribute>(true)
                     : null;
                 if (fieldAttr != null)
                 {
@@ -133,7 +133,7 @@ namespace Knot.Editor
             var type = port.ValueType;
             while (type != null && type != typeof(object))
             {
-                var typeAttr = type.GetCustomAttribute<Knot.Node.GraphPortColorAttribute>(false);
+                var typeAttr = type.GetCustomAttribute<Node.GraphPortColorAttribute>(false);
                 if (typeAttr != null)
                 {
                     color = typeAttr.Color;
@@ -196,15 +196,15 @@ namespace Knot.Editor
         /// <param name="direction"></param>
         /// <returns>True if NodeType has some port with value type compatible</returns>
         public static bool HasCompatiblePortType(Type nodeType, Type compatibleType,
-            Knot.NodePort.IO direction = Knot.NodePort.IO.Input)
+            NodePort.IO direction = NodePort.IO.Input)
         {
-            var findType = typeof(Knot.Node.InputAttribute);
-            if (direction == Knot.NodePort.IO.Output)
-                findType = typeof(Knot.Node.OutputAttribute);
+            var findType = typeof(Node.InputAttribute);
+            if (direction == NodePort.IO.Output)
+                findType = typeof(Node.OutputAttribute);
 
             //Get All fields from node type and we go filter only field with portAttribute.
             //This way is possible to know the values of the all ports and if have some with compatible value tue
-            foreach (var f in Knot.NodeDataCache.GetNodeFields(nodeType))
+            foreach (var f in NodeDataCache.GetNodeFields(nodeType))
             {
                 var portAttribute = f.GetCustomAttributes(findType, false).FirstOrDefault();
                 if (portAttribute != null)
@@ -227,7 +227,7 @@ namespace Knot.Editor
         /// <param name="direction"></param>
         /// <returns>Return Only Node Types with ports compatible, or an empty list</returns>
         public static List<Type> GetCompatibleNodesTypes(Type[] nodeTypes, Type compatibleType,
-            Knot.NodePort.IO direction = Knot.NodePort.IO.Input)
+            NodePort.IO direction = NodePort.IO.Input)
         {
             //Result List
             var filteredTypes = new List<Type>();

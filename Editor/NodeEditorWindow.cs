@@ -15,17 +15,17 @@ namespace Knot.Editor
         public static NodeEditorWindow Current;
 
         /// <summary> Stores port handle rects in node-local space. Add node.position when drawing. </summary>
-        private Dictionary<Knot.NodePort, Rect> PortConnectionPoints { get; } = new Dictionary<Knot.NodePort, Rect>();
+        private Dictionary<NodePort, Rect> PortConnectionPoints { get; } = new Dictionary<NodePort, Rect>();
 
         [SerializeField] private bool _portRectsLocal;
 
-        public void SetNodePosition(Knot.Node node, Vector2 pos)
+        public void SetNodePosition(Node node, Vector2 pos)
         {
             if (node == null) return;
             node.Position = pos;
         }
 
-        public bool TryGetPortGridRect(Knot.NodePort port, out Rect gridRect)
+        public bool TryGetPortGridRect(NodePort port, out Rect gridRect)
         {
             gridRect = default;
             if (port == null || !PortConnectionPoints.TryGetValue(port, out gridRect)) return false;
@@ -50,16 +50,16 @@ namespace Knot.Editor
         [Serializable]
         private class NodePortReference
         {
-            [SerializeField] private Knot.Node _node;
+            [SerializeField] private Node _node;
             [SerializeField] private string _name;
 
-            public NodePortReference(Knot.NodePort nodePort)
+            public NodePortReference(NodePort nodePort)
             {
                 _node = nodePort.Node;
                 _name = nodePort.FieldName;
             }
 
-            public Knot.NodePort GetNodePort()
+            public NodePort GetNodePort()
             {
                 if (_node == null)
                 {
@@ -148,7 +148,7 @@ namespace Knot.Editor
 
         private void ConvertPortRectsToLocal()
         {
-            var ports = new List<Knot.NodePort>(PortConnectionPoints.Keys);
+            var ports = new List<NodePort>(PortConnectionPoints.Keys);
             for (var i = 0; i < ports.Count; i++)
             {
                 var port = ports[i];
@@ -159,9 +159,9 @@ namespace Knot.Editor
             }
         }
 
-        public Dictionary<Knot.Node, Vector2> NodeSizes { get; } = new Dictionary<Knot.Node, Vector2>();
+        public Dictionary<Node, Vector2> NodeSizes { get; } = new Dictionary<Node, Vector2>();
 
-        public Knot.NodeGraph Graph;
+        public NodeGraph Graph;
 
         public Vector2 PanOffset
         {
@@ -306,7 +306,7 @@ namespace Knot.Editor
             }
         }
 
-        internal bool IsNodeHighlighted(Knot.Node node)
+        internal bool IsNodeHighlighted(Node node)
         {
             if (node == null || !IsHighlightFilterActive) return true;
 
@@ -338,9 +338,9 @@ namespace Knot.Editor
             return false;
         }
 
-        internal Knot.Node[] GetNodeSearchMatches()
+        internal Node[] GetNodeSearchMatches()
         {
-            if (!IsNodeSearchActive || Graph?.Nodes == null) return Array.Empty<Knot.Node>();
+            if (!IsNodeSearchActive || Graph?.Nodes == null) return Array.Empty<Node>();
             var query = NodeSearch.Trim();
             return Graph.Nodes
                 .Where(node =>
@@ -348,7 +348,7 @@ namespace Knot.Editor
                 .ToArray();
         }
 
-        public static bool NodeMatchesSearch(Knot.Node node, string query)
+        public static bool NodeMatchesSearch(Node node, string query)
         {
             if (node == null || string.IsNullOrWhiteSpace(query)) return false;
             var normalized = query.Trim();
@@ -361,7 +361,7 @@ namespace Knot.Editor
             var matches = GetNodeSearchMatches();
             if (matches.Length == 0) return;
 
-            var index = Array.IndexOf(matches, Selection.activeObject as Knot.Node);
+            var index = Array.IndexOf(matches, Selection.activeObject as Node);
             if (index < 0)
             {
                 index = direction < 0 ? matches.Length - 1 : 0;
@@ -381,7 +381,7 @@ namespace Knot.Editor
             Repaint();
         }
 
-        private static bool NodeReferencesVariable(Knot.Node node, string variableId)
+        private static bool NodeReferencesVariable(Node node, string variableId)
         {
             if (node == null || string.IsNullOrEmpty(variableId)) return false;
 
@@ -393,7 +393,7 @@ namespace Knot.Editor
                 enterChildren = iterator.propertyType == SerializedPropertyType.Generic ||
                                 iterator.propertyType == SerializedPropertyType.ManagedReference;
                 if (iterator.propertyType == SerializedPropertyType.String &&
-                    iterator.name == Knot.BlackboardVariableReference.VariableIdField &&
+                    iterator.name == BlackboardVariableReference.VariableIdField &&
                     iterator.stringValue == variableId)
                 {
                     return true;
@@ -426,7 +426,7 @@ namespace Knot.Editor
         /// <summary> Handle Selection Change events</summary>
         private static void OnSelectionChanged()
         {
-            var nodeGraph = Selection.activeObject as Knot.NodeGraph;
+            var nodeGraph = Selection.activeObject as NodeGraph;
             if (nodeGraph && !AssetDatabase.Contains(nodeGraph))
             {
                 if (NodeEditorPreferences.GetSettings().OpenOnCreate) Open(nodeGraph);
@@ -468,7 +468,7 @@ namespace Knot.Editor
             if (string.IsNullOrEmpty(path)) return;
             else
             {
-                var existingGraph = AssetDatabase.LoadAssetAtPath<Knot.NodeGraph>(path);
+                var existingGraph = AssetDatabase.LoadAssetAtPath<NodeGraph>(path);
                 if (existingGraph != null) AssetDatabase.DeleteAsset(path);
                 AssetDatabase.CreateAsset(Graph, path);
                 EditorUtility.SetDirty(Graph);
@@ -519,7 +519,7 @@ namespace Knot.Editor
             return new Vector2(xOffset, yOffset);
         }
 
-        public void SelectNode(Knot.Node node, bool add)
+        public void SelectNode(Node node, bool add)
         {
             if (add)
             {
@@ -530,7 +530,7 @@ namespace Knot.Editor
             else Selection.objects = new Object[] {node};
         }
 
-        public void DeselectNode(Knot.Node node)
+        public void DeselectNode(Node node)
         {
             var selection = new List<Object>(Selection.objects);
             selection.Remove(node);
@@ -543,7 +543,7 @@ namespace Knot.Editor
         [OnOpenAsset(0)]
         public static bool OnOpen(EntityId entityId, int line)
         {
-            var nodeGraph = EditorUtility.EntityIdToObject(entityId) as Knot.NodeGraph;
+            var nodeGraph = EditorUtility.EntityIdToObject(entityId) as NodeGraph;
 #else
         [OnOpenAsset(0)]
         public static bool OnOpen(int instanceID, int line)
@@ -572,7 +572,7 @@ namespace Knot.Editor
         }
 
         /// <summary>Open the provided graph in the NodeEditor</summary>
-        public static NodeEditorWindow Open(Knot.NodeGraph graph)
+        public static NodeEditorWindow Open(NodeGraph graph)
         {
             if (!graph) return null;
 
@@ -585,7 +585,7 @@ namespace Knot.Editor
             return w;
         }
 
-        private static NodeEditorWindow FindOrCreate(Knot.NodeGraph graph)
+        private static NodeEditorWindow FindOrCreate(NodeGraph graph)
         {
             var windows = Resources.FindObjectsOfTypeAll<NodeEditorWindow>();
             for (var i = 0; i < windows.Length; i++)

@@ -6,13 +6,13 @@ using UnityEngine;
 namespace Knot.Editor
 {
     /// <summary> Base class to derive custom Node editors from. Use this to create your own custom inspectors and editors for your nodes. </summary>
-    [CustomNodeEditor(typeof(Knot.Node))]
-    public class NodeEditor : Internal.NodeEditorBase<NodeEditor, NodeEditor.CustomNodeEditorAttribute, Knot.Node>
+    [CustomNodeEditor(typeof(Node))]
+    public class NodeEditor : Internal.NodeEditorBase<NodeEditor, NodeEditor.CustomNodeEditorAttribute, Node>
     {
         /// <summary> Fires every whenever a node was modified through the editor </summary>
-        public static Action<Knot.Node> OnUpdateNode;
+        public static Action<Node> OnUpdateNode;
 
-        public static readonly Dictionary<Knot.NodePort, Vector2> PortPositions = new Dictionary<Knot.NodePort, Vector2>();
+        public static readonly Dictionary<NodePort, Vector2> PortPositions = new Dictionary<NodePort, Vector2>();
 
         public virtual void BuildHeader(UI.NodeView view)
         {

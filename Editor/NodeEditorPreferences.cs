@@ -226,7 +226,7 @@ namespace Knot.Editor
             return settings != null ? settings.GetSlot(slot, fallback) : fallback;
         }
 
-        public static Color ResolvePortColor(Knot.NodePort port, GraphTypeSettings settings, bool execution)
+        public static Color ResolvePortColor(NodePort port, GraphTypeSettings settings, bool execution)
         {
             if (NodeEditorUtilities.TryGetGraphPortColor(port, out var attributed)) return attributed;
             if (execution)

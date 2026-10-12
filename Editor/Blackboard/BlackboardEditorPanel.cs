@@ -59,7 +59,7 @@ namespace Knot.Editor
         private static void CacheTypes()
         {
             var variables = new List<Type>();
-            foreach (var type in typeof(Knot.BlackboardVariable).GetDerivedTypes())
+            foreach (var type in typeof(BlackboardVariable).GetDerivedTypes())
             {
                 if (type.GetConstructor(Type.EmptyTypes) == null) continue;
                 if (ValueTypeOf(type) == null) continue;
@@ -108,7 +108,7 @@ namespace Knot.Editor
             while (current != null)
             {
                 if (current.IsGenericType &&
-                    current.GetGenericTypeDefinition() == typeof(Knot.BlackboardVariable<>))
+                    current.GetGenericTypeDefinition() == typeof(BlackboardVariable<>))
                 {
                     return current.GetGenericArguments()[0];
                 }
@@ -125,7 +125,7 @@ namespace Knot.Editor
             while (current != null)
             {
                 if (current.IsGenericType &&
-                    current.GetGenericTypeDefinition() == typeof(Knot.GetBlackboardVariableNode<>))
+                    current.GetGenericTypeDefinition() == typeof(GetBlackboardVariableNode<>))
                 {
                     return current.GetGenericArguments()[0];
                 }
@@ -148,7 +148,7 @@ namespace Knot.Editor
             return type.Name;
         }
 
-        internal static void CreateGetter(NodeEditorWindow window, Knot.BlackboardVariable variable)
+        internal static void CreateGetter(NodeEditorWindow window, BlackboardVariable variable)
         {
             if (!GetterTypes.TryGetValue(variable.ValueType, out var getterType))
             {
@@ -163,10 +163,10 @@ namespace Knot.Editor
                 getterType,
                 window.WindowToGridPosition(windowPosition));
 
-            var referenceType = typeof(Knot.BlackboardVariableReference<>)
+            var referenceType = typeof(BlackboardVariableReference<>)
                 .MakeGenericType(variable.ValueType);
             var reference = Activator.CreateInstance(referenceType, variable.Id);
-            var variableProperty = node.GetType().GetProperty(nameof(Knot.GetBlackboardVariableNode<object>.Variable));
+            var variableProperty = node.GetType().GetProperty(nameof(GetBlackboardVariableNode<object>.Variable));
             variableProperty?.SetValue(node, reference);
             EditorUtility.SetDirty(node);
         }
@@ -188,8 +188,8 @@ namespace Knot.Editor
                 _window = window;
                 _allowEdits = !Application.isPlaying;
                 _serializedGraph = new SerializedObject(window.Graph);
-                _variables = _serializedGraph.FindProperty(Knot.NodeGraph.BlackboardDefinitionField)
-                    ?.FindPropertyRelative(Knot.BlackboardDefinition.VariablesField);
+                _variables = _serializedGraph.FindProperty(NodeGraph.BlackboardDefinitionField)
+                    ?.FindPropertyRelative(BlackboardDefinition.VariablesField);
 
                 Root = new VisualElement();
                 Root.AddToClassList("bb-panel");
@@ -283,13 +283,13 @@ namespace Knot.Editor
                 if (index < 0 || index >= _variables.arraySize) return;
                 _serializedGraph.Update();
                 var element = _variables.GetArrayElementAtIndex(index);
-                var variable = element.managedReferenceValue as Knot.BlackboardVariable;
+                var variable = element.managedReferenceValue as BlackboardVariable;
                 card.EnableInClassList("highlighted",
                     variable != null && _window.HighlightedVariableId == variable.Id);
                 card.userData = index;
 
                 var nameField = card.Q<TextField>("name");
-                var nameProperty = element.FindPropertyRelative(Knot.BlackboardVariable.NameField);
+                var nameProperty = element.FindPropertyRelative(BlackboardVariable.NameField);
                 nameField.UnregisterValueChangedCallback(OnNameChanged);
                 nameField.Unbind();
                 if (nameProperty != null) nameField.BindProperty(nameProperty);
@@ -312,7 +312,7 @@ namespace Knot.Editor
                 remove.UnregisterCallback<ClickEvent>(OnRemoveClicked);
                 remove.RegisterCallback<ClickEvent>(OnRemoveClicked);
 
-                BindValue(card.Q("value"), element.FindPropertyRelative(Knot.BlackboardVariable<object>.DefaultValueField), variable?.ValueType);
+                BindValue(card.Q("value"), element.FindPropertyRelative(BlackboardVariable<object>.DefaultValueField), variable?.ValueType);
             }
 
             private void UnbindRow(VisualElement card, int _)
@@ -368,7 +368,7 @@ namespace Knot.Editor
             private void OnGetClicked(ClickEvent evt)
             {
                 if (evt.currentTarget is not Button button) return;
-                if (button.userData is not Knot.BlackboardVariable variable) return;
+                if (button.userData is not BlackboardVariable variable) return;
                 CreateGetter(_window, variable);
                 _window.RebuildUi();
             }
@@ -467,7 +467,7 @@ namespace Knot.Editor
             }
         }
 
-        private static string FindDuplicateName(IReadOnlyList<Knot.BlackboardVariable> variables)
+        private static string FindDuplicateName(IReadOnlyList<BlackboardVariable> variables)
         {
             var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             for (var i = 0; i < variables.Count; i++)

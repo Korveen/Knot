@@ -7,13 +7,13 @@ using UnityEngine.UIElements;
 
 namespace Knot.Editor
 {
-    [CustomPropertyDrawer(typeof(Knot.BlackboardVariableReference))]
-    [CustomPropertyDrawer(typeof(Knot.BlackboardVariableReference<>))]
+    [CustomPropertyDrawer(typeof(BlackboardVariableReference))]
+    [CustomPropertyDrawer(typeof(BlackboardVariableReference<>))]
     internal sealed class BlackboardVariableReferenceDrawer : PropertyDrawer
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            var idProperty = property.FindPropertyRelative(Knot.BlackboardVariableReference.VariableIdField);
+            var idProperty = property.FindPropertyRelative(BlackboardVariableReference.VariableIdField);
             var choices = new List<string>();
             var ids = new List<string>();
             var selected = CollectChoices(property, choices, ids);
@@ -36,7 +36,7 @@ namespace Knot.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var idProperty = property.FindPropertyRelative(Knot.BlackboardVariableReference.VariableIdField);
+            var idProperty = property.FindPropertyRelative(BlackboardVariableReference.VariableIdField);
             var choices = new List<string>();
             var ids = new List<string>();
             var selected = CollectChoices(property, choices, ids);
@@ -58,8 +58,8 @@ namespace Knot.Editor
 
         private int CollectChoices(SerializedProperty property, List<string> choices, List<string> ids)
         {
-            var idProperty = property.FindPropertyRelative(Knot.BlackboardVariableReference.VariableIdField);
-            var node = property.serializedObject.targetObject as Knot.Node;
+            var idProperty = property.FindPropertyRelative(BlackboardVariableReference.VariableIdField);
+            var node = property.serializedObject.targetObject as Node;
             var untyped = IsUntypedReference(property);
             var valueType = untyped ? null : GetExpectedValueType(node?.GetType(), property);
             choices.Add("<None>");
@@ -122,14 +122,14 @@ namespace Knot.Editor
                 return false;
             }
 
-            if (fieldType == typeof(Knot.BlackboardVariableReference))
+            if (fieldType == typeof(BlackboardVariableReference))
             {
                 return true;
             }
 
             if (fieldType.IsArray)
             {
-                return fieldType.GetElementType() == typeof(Knot.BlackboardVariableReference);
+                return fieldType.GetElementType() == typeof(BlackboardVariableReference);
             }
 
             if (!fieldType.IsGenericType)
@@ -140,7 +140,7 @@ namespace Knot.Editor
             var arguments = fieldType.GetGenericArguments();
             for (var i = 0; i < arguments.Length; i++)
             {
-                if (arguments[i] == typeof(Knot.BlackboardVariableReference))
+                if (arguments[i] == typeof(BlackboardVariableReference))
                 {
                     return true;
                 }
@@ -215,7 +215,7 @@ namespace Knot.Editor
         private static Type GenericArgument(Type fieldType)
         {
             if (fieldType is not {IsGenericType: true} ||
-                fieldType.GetGenericTypeDefinition() != typeof(Knot.BlackboardVariableReference<>))
+                fieldType.GetGenericTypeDefinition() != typeof(BlackboardVariableReference<>))
             {
                 return null;
             }

@@ -7,9 +7,9 @@ using UnityEngine.UIElements;
 namespace Knot.Editor
 {
     /// <summary> Base class to derive custom Node Graph editors from. Use this to override how graphs are drawn in the editor. </summary>
-    [CustomNodeGraphEditor(typeof(Knot.NodeGraph))]
+    [CustomNodeGraphEditor(typeof(NodeGraph))]
     public class NodeGraphEditor : Internal.NodeEditorBase<NodeGraphEditor,
-        NodeGraphEditor.CustomNodeGraphEditorAttribute, Knot.NodeGraph>
+        NodeGraphEditor.CustomNodeGraphEditorAttribute, NodeGraph>
     {
         [Obsolete("Use window.position instead")]
         public Rect Position
@@ -29,7 +29,7 @@ namespace Knot.Editor
         {
         }
 
-        public virtual void AddItemsToNodeMenu(DropdownMenu menu, Knot.Node node)
+        public virtual void AddItemsToNodeMenu(DropdownMenu menu, Node node)
         {
         }
 
@@ -45,7 +45,7 @@ namespace Knot.Editor
         {
         }
 
-        public virtual bool TryGetNodeIndex(Knot.Node node, out int index)
+        public virtual bool TryGetNodeIndex(Node node, out int index)
         {
             index = -1;
             return false;
@@ -87,7 +87,7 @@ namespace Knot.Editor
         {
             //Check if type has the CreateNodeMenuAttribute
             if (NodeEditorUtilities.GetAttrib(type,
-                    out Knot.Node.CreateNodeMenuAttribute attrib)) // Return custom path
+                    out Node.CreateNodeMenuAttribute attrib)) // Return custom path
                 return attrib.MenuName;
             else // Return generated path
                 return NodeEditorUtilities.NodeDefaultPath(type);
@@ -98,7 +98,7 @@ namespace Knot.Editor
         {
             //Check if type has the CreateNodeMenuAttribute
             if (NodeEditorUtilities.GetAttrib(type,
-                    out Knot.Node.CreateNodeMenuAttribute attrib)) // Return custom path
+                    out Node.CreateNodeMenuAttribute attrib)) // Return custom path
                 return attrib.Order;
             else
                 return 0;
@@ -107,7 +107,7 @@ namespace Knot.Editor
         /// <summary>
         /// Called before connecting two ports in the graph view to see if the output port is compatible with the input port
         /// </summary>
-        public virtual bool CanConnect(Knot.NodePort output, Knot.NodePort input)
+        public virtual bool CanConnect(NodePort output, NodePort input)
         {
             return output.CanConnectTo(input);
         }
@@ -115,7 +115,7 @@ namespace Knot.Editor
         /// <summary>
         /// Prefer this input when a connection is dropped on the node body instead of a specific port.
         /// </summary>
-        public virtual Knot.NodePort GetCompatibleInput(Knot.NodePort output, Knot.Node node)
+        public virtual NodePort GetCompatibleInput(NodePort output, Node node)
         {
             if (output == null || node == null || output.Node == node) return null;
             foreach (var input in node.Inputs)
@@ -129,7 +129,7 @@ namespace Knot.Editor
         /// <summary>
         /// Prefer this output when a reverse-dragged input is dropped on the node body instead of a specific port.
         /// </summary>
-        public virtual Knot.NodePort GetCompatibleOutput(Knot.NodePort input, Knot.Node node)
+        public virtual NodePort GetCompatibleOutput(NodePort input, Node node)
         {
             if (input == null || node == null || input.Node == node) return null;
             foreach (var output in node.Outputs)
@@ -143,7 +143,7 @@ namespace Knot.Editor
         /// <summary> Returned gradient is used to color noodles </summary>
         /// <param name="output"> The output this noodle comes from. Never null. </param>
         /// <param name="input"> The output this noodle comes from. Can be null if we are dragging the noodle. </param>
-        public virtual Gradient GetNoodleGradient(Knot.NodePort output, Knot.NodePort input)
+        public virtual Gradient GetNoodleGradient(NodePort output, NodePort input)
         {
             var grad = new Gradient();
 
@@ -180,7 +180,7 @@ namespace Knot.Editor
         /// <summary> Returned float is used for noodle thickness </summary>
         /// <param name="output"> The output this noodle comes from. Never null. </param>
         /// <param name="input"> The output this noodle comes from. Can be null if we are dragging the noodle. </param>
-        public virtual float GetNoodleThickness(Knot.NodePort output, Knot.NodePort input)
+        public virtual float GetNoodleThickness(NodePort output, NodePort input)
         {
             return NodeEditorPreferences.GetFor(this).NoodleThickness;
         }
@@ -189,30 +189,30 @@ namespace Knot.Editor
         /// Direction the noodle leaves a port, in GUI space (y+ is down).
         /// Default is left-to-right. Override for vertical graphs.
         /// </summary>
-        public virtual Vector2 GetNoodlePortDirection(Knot.NodePort port)
+        public virtual Vector2 GetNoodlePortDirection(NodePort port)
         {
             if (port == null || port.IsOutput) return Vector2.right;
             return Vector2.left;
         }
 
-        public virtual NoodlePath GetNoodlePath(Knot.NodePort output, Knot.NodePort input)
+        public virtual NoodlePath GetNoodlePath(NodePort output, NodePort input)
         {
             return NodeEditorPreferences.GetFor(this).NoodlePath;
         }
 
-        public virtual NoodleStroke GetNoodleStroke(Knot.NodePort output, Knot.NodePort input)
+        public virtual NoodleStroke GetNoodleStroke(NodePort output, NodePort input)
         {
             return NodeEditorPreferences.GetFor(this).NoodleStroke;
         }
 
-        public virtual float GetNoodleTension(Knot.NodePort output, Knot.NodePort input)
+        public virtual float GetNoodleTension(NodePort output, NodePort input)
         {
             var tension = NodeEditorPreferences.GetFor(this).NoodleTension;
             return tension > 0.01f ? tension : 0.45f;
         }
 
         /// <summary> Returned color is used to color ports </summary>
-        public virtual Color GetPortColor(Knot.NodePort port)
+        public virtual Color GetPortColor(NodePort port)
         {
             return NodeEditorPreferences.ResolvePortColor(port, NodeEditorPreferences.GetFor(this), false);
         }
@@ -227,17 +227,17 @@ namespace Knot.Editor
         /// </summary>
         /// <param name="port">the owner of the style</param>
         /// <returns></returns>
-        public virtual GUIStyle GetPortStyle(Knot.NodePort port)
+        public virtual GUIStyle GetPortStyle(NodePort port)
         {
-            if (port.Direction == Knot.NodePort.IO.Input)
-                return NodeEditorResources.styles.inputPort;
+            if (port.Direction == NodePort.IO.Input)
+                return NodeEditorResources.Styles.InputPort;
 
-            return NodeEditorResources.styles.outputPort;
+            return NodeEditorResources.Styles.OutputPort;
         }
 
         /// <summary> The returned color is used to color the background of the door.
         /// Usually used for outer edge effect </summary>
-        public virtual Color GetPortBackgroundColor(Knot.NodePort port)
+        public virtual Color GetPortBackgroundColor(NodePort port)
         {
             return Color.gray;
         }
@@ -249,7 +249,7 @@ namespace Knot.Editor
         }
 
         /// <summary> Override to display custom tooltips </summary>
-        public virtual string GetPortTooltip(Knot.NodePort port)
+        public virtual string GetPortTooltip(NodePort port)
         {
             var portType = port.ValueType;
             var tooltip = "";
@@ -270,7 +270,7 @@ namespace Knot.Editor
         }
 
         /// <summary> Create a node and save it in the graph asset </summary>
-        public virtual Knot.Node CreateNode(Type type, Vector2 position)
+        public virtual Node CreateNode(Type type, Vector2 position)
         {
             Undo.RecordObject(Target, "Create Node");
             var node = Target.AddNode(type);
@@ -285,7 +285,7 @@ namespace Knot.Editor
         }
 
         /// <summary> Creates a copy of the original node in the graph </summary>
-        public virtual Knot.Node CopyNode(Knot.Node original)
+        public virtual Node CopyNode(Node original)
         {
             Undo.RecordObject(Target, "Duplicate Node");
             var node = Target.CopyNode(original);
@@ -297,13 +297,13 @@ namespace Knot.Editor
         }
 
         /// <summary> Return false for nodes that can't be removed </summary>
-        public virtual bool CanRemove(Knot.Node node)
+        public virtual bool CanRemove(Node node)
         {
             // Check graph attributes to see if this node is required
             var graphType = Target.GetType();
             var attribs = Array.ConvertAll(
-                graphType.GetCustomAttributes(typeof(Knot.NodeGraph.RequireNodeAttribute), true),
-                x => x as Knot.NodeGraph.RequireNodeAttribute);
+                graphType.GetCustomAttributes(typeof(NodeGraph.RequireNodeAttribute), true),
+                x => x as NodeGraph.RequireNodeAttribute);
             if (attribs.Any(x => x.Requires(node.GetType())))
             {
                 if (Target.Nodes.Count(x => x.GetType() == node.GetType()) <= 1)
@@ -316,7 +316,7 @@ namespace Knot.Editor
         }
 
         /// <summary> Safely remove a node and all its connections. </summary>
-        public virtual void RemoveNode(Knot.Node node)
+        public virtual void RemoveNode(Node node)
         {
             if (!CanRemove(node)) return;
 

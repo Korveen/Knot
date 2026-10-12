@@ -4,11 +4,11 @@ namespace Knot.Editor.Internal
 {
     public struct RerouteReference
     {
-        public readonly Knot.NodePort Port;
+        public readonly NodePort Port;
         public readonly int ConnectionIndex;
         public readonly int PointIndex;
 
-        public RerouteReference(Knot.NodePort port, int connectionIndex, int pointIndex)
+        public RerouteReference(NodePort port, int connectionIndex, int pointIndex)
         {
             Port = port;
             ConnectionIndex = connectionIndex;

@@ -8,7 +8,7 @@ using Knot;
 namespace Knot.Editor
 {
     [CustomEditor(typeof(SceneGraph), true)]
-    public class SceneGraphEditor : Editor
+    public class SceneGraphEditor : UnityEditor.Editor
     {
         private SceneGraph _sceneGraph;
         private bool _removeSafely;

@@ -13,7 +13,7 @@ namespace Knot.Editor.UI
     {
         private static readonly HashSet<string> DefaultExcludes = new HashSet<string>
         {
-            "m_Script", nameof(Knot.Node.Graph), nameof(Knot.Node.Position), Knot.Node.PortsField, Knot.Node.NodeIdField
+            "m_Script", nameof(Node.Graph), nameof(Node.Position), Node.PortsField, Node.NodeIdField
         };
 
         public static void BindSerializedFields(
