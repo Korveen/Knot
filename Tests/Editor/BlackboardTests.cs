@@ -1,33 +1,44 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace XNode.Tests {
-    public sealed class BlackboardTests {
-        private sealed class TestGraph : NodeGraph { }
+namespace XNode.Tests
+{
+    public sealed class BlackboardTests
+    {
+        private sealed class TestGraph : NodeGraph
+        {
+        }
 
-        private TestGraph graph;
+        private TestGraph _graph;
 
         [SetUp]
-        public void SetUp() {
-            graph = ScriptableObject.CreateInstance<TestGraph>();
+        public void SetUp()
+        {
+            _graph = ScriptableObject.CreateInstance<TestGraph>();
         }
 
         [TearDown]
-        public void TearDown() {
-            for (int i = graph.nodes.Count - 1; i >= 0; i--) {
-                if (graph.nodes[i] != null) Object.DestroyImmediate(graph.nodes[i]);
+        public void TearDown()
+        {
+            for (var i = _graph.Nodes.Count - 1; i >= 0; i--)
+            {
+                if (_graph.Nodes[i] != null)
+                {
+                    Object.DestroyImmediate(_graph.Nodes[i]);
+                }
             }
-            Object.DestroyImmediate(graph);
+
+            Object.DestroyImmediate(_graph);
         }
 
         [Test]
-        public void RuntimeInstancesAreIsolated() {
-            FloatVariable variable =
-                graph.BlackboardDefinition.Add<FloatVariable>("Speed");
+        public void RuntimeInstancesAreIsolated()
+        {
+            var variable = _graph.BlackboardDefinition.Add<FloatVariable>("Speed");
             variable.DefaultValue = 3f;
 
-            BlackboardInstance first = graph.BlackboardDefinition.CreateInstance();
-            BlackboardInstance second = graph.BlackboardDefinition.CreateInstance();
+            var first = _graph.BlackboardDefinition.CreateInstance();
+            var second = _graph.BlackboardDefinition.CreateInstance();
             first.Set(variable.Id, 9f);
 
             Assert.That(first.Get<float>(variable.Id), Is.EqualTo(9f));
@@ -35,52 +46,46 @@ namespace XNode.Tests {
         }
 
         [Test]
-        public void RenameKeepsStableReference() {
-            IntVariable variable =
-                graph.BlackboardDefinition.Add<IntVariable>("Count");
-            string id = variable.Id;
+        public void RenameKeepsStableReference()
+        {
+            var variable = _graph.BlackboardDefinition.Add<IntVariable>("Count");
+            var id = variable.Id;
 
-            Assert.That(graph.BlackboardDefinition.Rename(id, "Total"), Is.True);
+            Assert.That(_graph.BlackboardDefinition.Rename(id, "Total"), Is.True);
             Assert.That(variable.Id, Is.EqualTo(id));
             Assert.That(variable.Name, Is.EqualTo("Total"));
         }
 
         [Test]
-        public void DuplicateNamesAreRejectedCaseInsensitively() {
-            IntVariable first =
-                graph.BlackboardDefinition.Add<IntVariable>("Count");
-            IntVariable second =
-                graph.BlackboardDefinition.Add<IntVariable>("Other");
+        public void DuplicateNamesAreRejectedCaseInsensitively()
+        {
+            var first = _graph.BlackboardDefinition.Add<IntVariable>("Count");
+            var second = _graph.BlackboardDefinition.Add<IntVariable>("Other");
 
-            Assert.That(
-                graph.BlackboardDefinition.Rename(second.Id, first.Name.ToLowerInvariant()),
-                Is.False);
+            Assert.That(_graph.BlackboardDefinition.Rename(second.Id, first.Name.ToLowerInvariant()), Is.False);
         }
 
         [Test]
-        public void GetterReadsExecutionContext() {
-            FloatVariable variable =
-                graph.BlackboardDefinition.Add<FloatVariable>("Speed");
+        public void GetterReadsExecutionContext()
+        {
+            var variable = _graph.BlackboardDefinition.Add<FloatVariable>("Speed");
             variable.DefaultValue = 2f;
-            GetFloat getter =
-                graph.AddNode<GetFloat>();
+            var getter = _graph.AddNode<GetFloat>();
             getter.Variable = new BlackboardVariableReference<float>(variable.Id);
 
-            GraphExecutionContext context = new GraphExecutionContext(graph);
+            var context = new GraphExecutionContext(_graph);
             context.Blackboard.Set(variable.Id, 7f);
 
-            Assert.That(
-                getter.GetValue(getter.GetOutputPort("value"), context),
-                Is.EqualTo(7f));
+            var port = getter.GetOutputPort(nameof(GetFloat.Value));
+            Assert.That(getter.GetValue(port, context), Is.EqualTo(7f));
         }
 
         [Test]
-        public void OverrideSetAppliesEnabledValuesOnly() {
-            IntVariable count =
-                graph.BlackboardDefinition.Add<IntVariable>("Count");
+        public void OverrideSetAppliesEnabledValuesOnly()
+        {
+            var count = _graph.BlackboardDefinition.Add<IntVariable>("Count");
             count.DefaultValue = 1;
-            FloatVariable speed =
-                graph.BlackboardDefinition.Add<FloatVariable>("Speed");
+            var speed = _graph.BlackboardDefinition.Add<FloatVariable>("Speed");
             speed.DefaultValue = 2f;
 
             var overrides = new BlackboardOverrideSet();
@@ -88,7 +93,7 @@ namespace XNode.Tests {
             overrides.Enable(speed);
             overrides.Disable(speed.Id);
 
-            BlackboardInstance instance = graph.BlackboardDefinition.CreateInstance();
+            var instance = _graph.BlackboardDefinition.CreateInstance();
             overrides.Apply(instance);
 
             Assert.That(instance.Get<int>(count.Id), Is.EqualTo(9));
@@ -96,9 +101,10 @@ namespace XNode.Tests {
         }
 
         [Test]
-        public void TrySetByNameRejectsWrongType() {
-            graph.BlackboardDefinition.Add<IntVariable>("Count");
-            BlackboardInstance instance = graph.BlackboardDefinition.CreateInstance();
+        public void TrySetByNameRejectsWrongType()
+        {
+            _graph.BlackboardDefinition.Add<IntVariable>("Count");
+            var instance = _graph.BlackboardDefinition.CreateInstance();
 
             Assert.That(instance.TrySetByName("Count", 4), Is.True);
             Assert.That(instance.TrySetByName("Count", 1.5f), Is.False);
@@ -106,11 +112,10 @@ namespace XNode.Tests {
         }
 
         [Test]
-        public void CopiedNodeReceivesNewStableId() {
-            GetFloat original =
-                graph.AddNode<GetFloat>();
-            GetFloat copy =
-                (GetFloat)graph.CopyNode(original);
+        public void CopiedNodeReceivesNewStableId()
+        {
+            var original = _graph.AddNode<GetFloat>();
+            var copy = (GetFloat) _graph.CopyNode(original);
 
             Assert.That(copy.NodeId, Is.Not.EqualTo(original.NodeId));
         }
