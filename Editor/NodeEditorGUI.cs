@@ -1,4 +1,4 @@
-namespace XNodeEditor
+namespace Knot.Editor
 {
     public partial class NodeEditorWindow
     {

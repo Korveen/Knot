@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     public abstract class GetBlackboardVariableNode<T> : Node, IAuxiliaryGraphNode
     {

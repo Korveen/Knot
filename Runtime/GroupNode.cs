@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     [CreateNodeMenu("Group")]
     public class GroupNode : Node, IAuxiliaryGraphNode

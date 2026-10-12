@@ -1,7 +1,7 @@
 {
-    "name": "XNode.Tests",
+    "name": "Knot.Tests",
     "references": [
-        "XNode"
+        "Knot"
     ],
     "includePlatforms": [
         "Editor"

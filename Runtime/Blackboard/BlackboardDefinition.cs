@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>Serializable Blackboard schema stored on a graph asset.</summary>
     [Serializable]

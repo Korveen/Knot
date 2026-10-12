@@ -6,11 +6,11 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using XNode;
-using XNodeEditor.Internal;
+using Knot;
+using Knot.Editor.Internal;
 using Object = UnityEngine.Object;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     public sealed class GraphUiController : IDisposable
     {

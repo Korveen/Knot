@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using XNode;
+using Knot;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     public partial class NodeEditorWindow
     {

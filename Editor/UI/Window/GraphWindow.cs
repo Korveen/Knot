@@ -1,6 +1,6 @@
 using UnityEngine.UIElements;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     /// <summary>UITK shell for <see cref="NodeEditorWindow"/>. Loads UXML/USS and hosts <see cref="GraphUiController"/>.</summary>
     public sealed class GraphWindow : VisualElement

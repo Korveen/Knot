@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using XNode;
+using Knot;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     public sealed class GroupView : NodeView
     {

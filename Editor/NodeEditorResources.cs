@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace XNodeEditor {
+namespace Knot.Editor {
     public static class NodeEditorResources {
         // Textures
         public static Texture2D dot => _dot != null ? _dot : _dot = Resources.Load<Texture2D>("xnode_dot");

@@ -4,9 +4,9 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
-using XNode;
+using Knot;
 
-namespace XNodeEditor {
+namespace Knot.Editor {
     /// <summary> Deals with modified assets </summary>
     class NodeGraphImporter : AssetPostprocessor {
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths) {

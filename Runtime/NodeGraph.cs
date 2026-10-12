@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary> Base class for all node graphs </summary>
     [Serializable]

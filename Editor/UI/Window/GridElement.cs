@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     public sealed class GridElement : VisualElement
     {

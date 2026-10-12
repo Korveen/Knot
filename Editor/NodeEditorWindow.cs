@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 using System;
 using Object = UnityEngine.Object;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     [InitializeOnLoad]
     public partial class NodeEditorWindow : EditorWindow, IHasCustomMenu
@@ -15,17 +15,17 @@ namespace XNodeEditor
         public static NodeEditorWindow Current;
 
         /// <summary> Stores port handle rects in node-local space. Add node.position when drawing. </summary>
-        private Dictionary<XNode.NodePort, Rect> PortConnectionPoints { get; } = new Dictionary<XNode.NodePort, Rect>();
+        private Dictionary<Knot.NodePort, Rect> PortConnectionPoints { get; } = new Dictionary<Knot.NodePort, Rect>();
 
         [SerializeField] private bool _portRectsLocal;
 
-        public void SetNodePosition(XNode.Node node, Vector2 pos)
+        public void SetNodePosition(Knot.Node node, Vector2 pos)
         {
             if (node == null) return;
             node.Position = pos;
         }
 
-        public bool TryGetPortGridRect(XNode.NodePort port, out Rect gridRect)
+        public bool TryGetPortGridRect(Knot.NodePort port, out Rect gridRect)
         {
             gridRect = default;
             if (port == null || !PortConnectionPoints.TryGetValue(port, out gridRect)) return false;
@@ -50,16 +50,16 @@ namespace XNodeEditor
         [Serializable]
         private class NodePortReference
         {
-            [SerializeField] private XNode.Node _node;
+            [SerializeField] private Knot.Node _node;
             [SerializeField] private string _name;
 
-            public NodePortReference(XNode.NodePort nodePort)
+            public NodePortReference(Knot.NodePort nodePort)
             {
                 _node = nodePort.Node;
                 _name = nodePort.FieldName;
             }
 
-            public XNode.NodePort GetNodePort()
+            public Knot.NodePort GetNodePort()
             {
                 if (_node == null)
                 {
@@ -148,7 +148,7 @@ namespace XNodeEditor
 
         private void ConvertPortRectsToLocal()
         {
-            var ports = new List<XNode.NodePort>(PortConnectionPoints.Keys);
+            var ports = new List<Knot.NodePort>(PortConnectionPoints.Keys);
             for (var i = 0; i < ports.Count; i++)
             {
                 var port = ports[i];
@@ -159,9 +159,9 @@ namespace XNodeEditor
             }
         }
 
-        public Dictionary<XNode.Node, Vector2> NodeSizes { get; } = new Dictionary<XNode.Node, Vector2>();
+        public Dictionary<Knot.Node, Vector2> NodeSizes { get; } = new Dictionary<Knot.Node, Vector2>();
 
-        public XNode.NodeGraph Graph;
+        public Knot.NodeGraph Graph;
 
         public Vector2 PanOffset
         {
@@ -306,7 +306,7 @@ namespace XNodeEditor
             }
         }
 
-        internal bool IsNodeHighlighted(XNode.Node node)
+        internal bool IsNodeHighlighted(Knot.Node node)
         {
             if (node == null || !IsHighlightFilterActive) return true;
 
@@ -338,9 +338,9 @@ namespace XNodeEditor
             return false;
         }
 
-        internal XNode.Node[] GetNodeSearchMatches()
+        internal Knot.Node[] GetNodeSearchMatches()
         {
-            if (!IsNodeSearchActive || Graph?.Nodes == null) return Array.Empty<XNode.Node>();
+            if (!IsNodeSearchActive || Graph?.Nodes == null) return Array.Empty<Knot.Node>();
             var query = NodeSearch.Trim();
             return Graph.Nodes
                 .Where(node =>
@@ -348,7 +348,7 @@ namespace XNodeEditor
                 .ToArray();
         }
 
-        public static bool NodeMatchesSearch(XNode.Node node, string query)
+        public static bool NodeMatchesSearch(Knot.Node node, string query)
         {
             if (node == null || string.IsNullOrWhiteSpace(query)) return false;
             var normalized = query.Trim();
@@ -361,7 +361,7 @@ namespace XNodeEditor
             var matches = GetNodeSearchMatches();
             if (matches.Length == 0) return;
 
-            var index = Array.IndexOf(matches, Selection.activeObject as XNode.Node);
+            var index = Array.IndexOf(matches, Selection.activeObject as Knot.Node);
             if (index < 0)
             {
                 index = direction < 0 ? matches.Length - 1 : 0;
@@ -381,7 +381,7 @@ namespace XNodeEditor
             Repaint();
         }
 
-        private static bool NodeReferencesVariable(XNode.Node node, string variableId)
+        private static bool NodeReferencesVariable(Knot.Node node, string variableId)
         {
             if (node == null || string.IsNullOrEmpty(variableId)) return false;
 
@@ -393,7 +393,7 @@ namespace XNodeEditor
                 enterChildren = iterator.propertyType == SerializedPropertyType.Generic ||
                                 iterator.propertyType == SerializedPropertyType.ManagedReference;
                 if (iterator.propertyType == SerializedPropertyType.String &&
-                    iterator.name == XNode.BlackboardVariableReference.VariableIdField &&
+                    iterator.name == Knot.BlackboardVariableReference.VariableIdField &&
                     iterator.stringValue == variableId)
                 {
                     return true;
@@ -426,7 +426,7 @@ namespace XNodeEditor
         /// <summary> Handle Selection Change events</summary>
         private static void OnSelectionChanged()
         {
-            var nodeGraph = Selection.activeObject as XNode.NodeGraph;
+            var nodeGraph = Selection.activeObject as Knot.NodeGraph;
             if (nodeGraph && !AssetDatabase.Contains(nodeGraph))
             {
                 if (NodeEditorPreferences.GetSettings().OpenOnCreate) Open(nodeGraph);
@@ -446,7 +446,7 @@ namespace XNodeEditor
         public static NodeEditorWindow Init()
         {
             var w = CreateInstance<NodeEditorWindow>();
-            w.titleContent = new GUIContent("xNode");
+            w.titleContent = new GUIContent("Knot");
             w.wantsMouseMove = true;
             w.Show();
             return w;
@@ -468,7 +468,7 @@ namespace XNodeEditor
             if (string.IsNullOrEmpty(path)) return;
             else
             {
-                var existingGraph = AssetDatabase.LoadAssetAtPath<XNode.NodeGraph>(path);
+                var existingGraph = AssetDatabase.LoadAssetAtPath<Knot.NodeGraph>(path);
                 if (existingGraph != null) AssetDatabase.DeleteAsset(path);
                 AssetDatabase.CreateAsset(Graph, path);
                 EditorUtility.SetDirty(Graph);
@@ -519,7 +519,7 @@ namespace XNodeEditor
             return new Vector2(xOffset, yOffset);
         }
 
-        public void SelectNode(XNode.Node node, bool add)
+        public void SelectNode(Knot.Node node, bool add)
         {
             if (add)
             {
@@ -530,7 +530,7 @@ namespace XNodeEditor
             else Selection.objects = new Object[] {node};
         }
 
-        public void DeselectNode(XNode.Node node)
+        public void DeselectNode(Knot.Node node)
         {
             var selection = new List<Object>(Selection.objects);
             selection.Remove(node);
@@ -543,15 +543,15 @@ namespace XNodeEditor
         [OnOpenAsset(0)]
         public static bool OnOpen(EntityId entityId, int line)
         {
-            var nodeGraph = EditorUtility.EntityIdToObject(entityId) as XNode.NodeGraph;
+            var nodeGraph = EditorUtility.EntityIdToObject(entityId) as Knot.NodeGraph;
 #else
         [OnOpenAsset(0)]
         public static bool OnOpen(int instanceID, int line)
         {
 #if UNITY_6000_4_OR_NEWER
-            var nodeGraph = EditorUtility.EntityIdToObject(instanceID) as XNode.NodeGraph;
+            var nodeGraph = EditorUtility.EntityIdToObject(instanceID) as Knot.NodeGraph;
 #else
-            var nodeGraph = EditorUtility.InstanceIDToObject(instanceID) as XNode.NodeGraph;
+            var nodeGraph = EditorUtility.InstanceIDToObject(instanceID) as Knot.NodeGraph;
 #endif
 #endif
             if (nodeGraph != null)
@@ -566,13 +566,13 @@ namespace XNodeEditor
         internal void ApplyTitle()
         {
             var name = Graph != null ? Graph.name : null;
-            if (string.IsNullOrEmpty(name)) name = "xNode";
+            if (string.IsNullOrEmpty(name)) name = "Knot";
             if (titleContent != null && titleContent.text == name) return;
             titleContent = new GUIContent(name);
         }
 
         /// <summary>Open the provided graph in the NodeEditor</summary>
-        public static NodeEditorWindow Open(XNode.NodeGraph graph)
+        public static NodeEditorWindow Open(Knot.NodeGraph graph)
         {
             if (!graph) return null;
 
@@ -585,7 +585,7 @@ namespace XNodeEditor
             return w;
         }
 
-        private static NodeEditorWindow FindOrCreate(XNode.NodeGraph graph)
+        private static NodeEditorWindow FindOrCreate(Knot.NodeGraph graph)
         {
             var windows = Resources.FindObjectsOfTypeAll<NodeEditorWindow>();
             for (var i = 0; i < windows.Length; i++)

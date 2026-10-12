@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     internal static class BlackboardEditorPanel
     {
@@ -59,7 +59,7 @@ namespace XNodeEditor
         private static void CacheTypes()
         {
             var variables = new List<Type>();
-            foreach (var type in typeof(XNode.BlackboardVariable).GetDerivedTypes())
+            foreach (var type in typeof(Knot.BlackboardVariable).GetDerivedTypes())
             {
                 if (type.GetConstructor(Type.EmptyTypes) == null) continue;
                 if (ValueTypeOf(type) == null) continue;
@@ -108,7 +108,7 @@ namespace XNodeEditor
             while (current != null)
             {
                 if (current.IsGenericType &&
-                    current.GetGenericTypeDefinition() == typeof(XNode.BlackboardVariable<>))
+                    current.GetGenericTypeDefinition() == typeof(Knot.BlackboardVariable<>))
                 {
                     return current.GetGenericArguments()[0];
                 }
@@ -125,7 +125,7 @@ namespace XNodeEditor
             while (current != null)
             {
                 if (current.IsGenericType &&
-                    current.GetGenericTypeDefinition() == typeof(XNode.GetBlackboardVariableNode<>))
+                    current.GetGenericTypeDefinition() == typeof(Knot.GetBlackboardVariableNode<>))
                 {
                     return current.GetGenericArguments()[0];
                 }
@@ -148,7 +148,7 @@ namespace XNodeEditor
             return type.Name;
         }
 
-        internal static void CreateGetter(NodeEditorWindow window, XNode.BlackboardVariable variable)
+        internal static void CreateGetter(NodeEditorWindow window, Knot.BlackboardVariable variable)
         {
             if (!GetterTypes.TryGetValue(variable.ValueType, out var getterType))
             {
@@ -163,10 +163,10 @@ namespace XNodeEditor
                 getterType,
                 window.WindowToGridPosition(windowPosition));
 
-            var referenceType = typeof(XNode.BlackboardVariableReference<>)
+            var referenceType = typeof(Knot.BlackboardVariableReference<>)
                 .MakeGenericType(variable.ValueType);
             var reference = Activator.CreateInstance(referenceType, variable.Id);
-            var variableProperty = node.GetType().GetProperty(nameof(XNode.GetBlackboardVariableNode<object>.Variable));
+            var variableProperty = node.GetType().GetProperty(nameof(Knot.GetBlackboardVariableNode<object>.Variable));
             variableProperty?.SetValue(node, reference);
             EditorUtility.SetDirty(node);
         }
@@ -188,8 +188,8 @@ namespace XNodeEditor
                 _window = window;
                 _allowEdits = !Application.isPlaying;
                 _serializedGraph = new SerializedObject(window.Graph);
-                _variables = _serializedGraph.FindProperty(XNode.NodeGraph.BlackboardDefinitionField)
-                    ?.FindPropertyRelative(XNode.BlackboardDefinition.VariablesField);
+                _variables = _serializedGraph.FindProperty(Knot.NodeGraph.BlackboardDefinitionField)
+                    ?.FindPropertyRelative(Knot.BlackboardDefinition.VariablesField);
 
                 Root = new VisualElement();
                 Root.AddToClassList("bb-panel");
@@ -283,13 +283,13 @@ namespace XNodeEditor
                 if (index < 0 || index >= _variables.arraySize) return;
                 _serializedGraph.Update();
                 var element = _variables.GetArrayElementAtIndex(index);
-                var variable = element.managedReferenceValue as XNode.BlackboardVariable;
+                var variable = element.managedReferenceValue as Knot.BlackboardVariable;
                 card.EnableInClassList("highlighted",
                     variable != null && _window.HighlightedVariableId == variable.Id);
                 card.userData = index;
 
                 var nameField = card.Q<TextField>("name");
-                var nameProperty = element.FindPropertyRelative(XNode.BlackboardVariable.NameField);
+                var nameProperty = element.FindPropertyRelative(Knot.BlackboardVariable.NameField);
                 nameField.UnregisterValueChangedCallback(OnNameChanged);
                 nameField.Unbind();
                 if (nameProperty != null) nameField.BindProperty(nameProperty);
@@ -312,7 +312,7 @@ namespace XNodeEditor
                 remove.UnregisterCallback<ClickEvent>(OnRemoveClicked);
                 remove.RegisterCallback<ClickEvent>(OnRemoveClicked);
 
-                BindValue(card.Q("value"), element.FindPropertyRelative(XNode.BlackboardVariable<object>.DefaultValueField), variable?.ValueType);
+                BindValue(card.Q("value"), element.FindPropertyRelative(Knot.BlackboardVariable<object>.DefaultValueField), variable?.ValueType);
             }
 
             private void UnbindRow(VisualElement card, int _)
@@ -368,7 +368,7 @@ namespace XNodeEditor
             private void OnGetClicked(ClickEvent evt)
             {
                 if (evt.currentTarget is not Button button) return;
-                if (button.userData is not XNode.BlackboardVariable variable) return;
+                if (button.userData is not Knot.BlackboardVariable variable) return;
                 CreateGetter(_window, variable);
                 _window.RebuildUi();
             }
@@ -467,7 +467,7 @@ namespace XNodeEditor
             }
         }
 
-        private static string FindDuplicateName(IReadOnlyList<XNode.BlackboardVariable> variables)
+        private static string FindDuplicateName(IReadOnlyList<Knot.BlackboardVariable> variables)
         {
             var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             for (var i = 0; i < variables.Count; i++)

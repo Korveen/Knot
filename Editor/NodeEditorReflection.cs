@@ -6,12 +6,12 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 #if UNITY_2019_1_OR_NEWER && USE_ADVANCED_GENERIC_MENU
-using GenericMenu = XNodeEditor.AdvancedGenericMenu;
+using GenericMenu = Knot.Editor.AdvancedGenericMenu;
 #endif
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
-    /// <summary> Contains reflection-related extensions built for xNode </summary>
+    /// <summary> Contains reflection-related extensions built for Knot </summary>
     public static class NodeEditorReflection
     {
         [NonSerialized] private static Dictionary<Type, Color> _nodeTint;
@@ -34,7 +34,7 @@ namespace XNodeEditor
         public static Type[] GetNodeTypes()
         {
             //Get all classes deriving from Node via reflection
-            return GetDerivedTypes(typeof(XNode.Node));
+            return GetDerivedTypes(typeof(Knot.Node));
         }
 
         /// <summary> Custom node tint colors defined with [NodeColor(r, g, b)] </summary>
@@ -42,7 +42,7 @@ namespace XNodeEditor
         {
             if (_nodeTint == null)
             {
-                CacheAttributes<Color, XNode.Node.NodeTintAttribute>(ref _nodeTint, x => x.Color);
+                CacheAttributes<Color, Knot.Node.NodeTintAttribute>(ref _nodeTint, x => x.Color);
             }
 
             return _nodeTint.TryGetValue(nodeType, out tint);
@@ -55,10 +55,10 @@ namespace XNodeEditor
         {
             icon = null;
             var type = nodeType;
-            while (type != null && typeof(XNode.Node).IsAssignableFrom(type))
+            while (type != null && typeof(Knot.Node).IsAssignableFrom(type))
             {
-                object attr = Attribute.GetCustomAttribute(type, typeof(XNode.Node.NodeIconAttribute), false);
-                if (attr is XNode.Node.NodeIconAttribute iconAttribute)
+                object attr = Attribute.GetCustomAttribute(type, typeof(Knot.Node.NodeIconAttribute), false);
+                if (attr is Knot.Node.NodeIconAttribute iconAttribute)
                 {
                     icon = iconAttribute.Icon;
                     return !string.IsNullOrEmpty(icon);
@@ -75,7 +75,7 @@ namespace XNodeEditor
         {
             if (_nodeWidth == null)
             {
-                CacheAttributes<int, XNode.Node.NodeWidthAttribute>(ref _nodeWidth, x => x.Width);
+                CacheAttributes<int, Knot.Node.NodeWidthAttribute>(ref _nodeWidth, x => x.Width);
             }
 
             return _nodeWidth.TryGetValue(nodeType, out width);
@@ -100,7 +100,7 @@ namespace XNodeEditor
             var field = type.GetField(fieldName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             // Search base classes for private fields only. Public fields are found above
-            while (field == null && (type = type.BaseType) != typeof(XNode.Node))
+            while (field == null && (type = type.BaseType) != typeof(Knot.Node))
                 field = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
             return field;
         }
@@ -210,7 +210,7 @@ namespace XNodeEditor
             try
             {
                 #if UNITY_2018_3_OR_NEWER
-                SettingsService.OpenUserPreferences("Preferences/XNode");
+                SettingsService.OpenUserPreferences("Preferences/Knot");
                 #else
                 //Open preferences window
                 Assembly assembly = Assembly.GetAssembly(typeof(UnityEditor.EditorWindow));
@@ -252,7 +252,7 @@ namespace XNodeEditor
             {
                 Debug.LogError(e);
                 Debug.LogWarning(
-                    "Unity has changed around internally. Can't open properties through reflection. Please contact xNode developer and supply unity version number.");
+                    "Unity has changed around internally. Can't open properties through reflection. Please contact Knot developer and supply unity version number.");
             }
         }
     }

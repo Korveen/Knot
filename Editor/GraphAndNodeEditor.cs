@@ -2,10 +2,10 @@
 using UnityEngine;
 
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     /// <summary> Override graph inspector to show an 'Open Graph' button at the top </summary>
-    [CustomEditor(typeof(XNode.NodeGraph), true)]
+    [CustomEditor(typeof(Knot.NodeGraph), true)]
     [CanEditMultipleObjects]
     public class GlobalGraphEditor : Editor
     {
@@ -15,7 +15,7 @@ namespace XNodeEditor
 
             if (GUILayout.Button("Edit graph", GUILayout.Height(40)))
             {
-                NodeEditorWindow.Open(serializedObject.targetObject as XNode.NodeGraph);
+                NodeEditorWindow.Open(serializedObject.targetObject as Knot.NodeGraph);
             }
 
             GUILayout.Space(EditorGUIUtility.singleLineHeight);
@@ -27,7 +27,7 @@ namespace XNodeEditor
         }
     }
 
-    [CustomEditor(typeof(XNode.Node), true)]
+    [CustomEditor(typeof(Knot.Node), true)]
     [CanEditMultipleObjects]
     public class GlobalNodeEditor : Editor
     {
@@ -37,7 +37,7 @@ namespace XNodeEditor
 
             if (GUILayout.Button("Edit graph", GUILayout.Height(40)))
             {
-                var w = NodeEditorWindow.Open(((XNode.Node) target).Graph);
+                var w = NodeEditorWindow.Open(((Knot.Node) target).Graph);
                 w.Home(); // Focus selected node
             }
 

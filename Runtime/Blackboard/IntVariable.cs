@@ -1,6 +1,6 @@
 using System;
 
-namespace XNode
+namespace Knot
 {
     [Serializable]
     public sealed class IntVariable : BlackboardVariable<int> { }

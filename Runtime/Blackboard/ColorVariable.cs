@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     [Serializable]
     public sealed class ColorVariable : BlackboardVariable<Color> { }

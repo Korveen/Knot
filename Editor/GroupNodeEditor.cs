@@ -1,8 +1,8 @@
 using UnityEngine;
-using XNode;
-using XNodeEditor.UI;
+using Knot;
+using Knot.Editor.UI;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     [CustomNodeEditor(typeof(GroupNode))]
     public class GroupNodeEditor : NodeEditor

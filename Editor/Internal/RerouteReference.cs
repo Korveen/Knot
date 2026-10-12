@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 
-namespace XNodeEditor.Internal
+namespace Knot.Editor.Internal
 {
     public struct RerouteReference
     {
-        public readonly XNode.NodePort Port;
+        public readonly Knot.NodePort Port;
         public readonly int ConnectionIndex;
         public readonly int PointIndex;
 
-        public RerouteReference(XNode.NodePort port, int connectionIndex, int pointIndex)
+        public RerouteReference(Knot.NodePort port, int connectionIndex, int pointIndex)
         {
             Port = port;
             ConnectionIndex = connectionIndex;

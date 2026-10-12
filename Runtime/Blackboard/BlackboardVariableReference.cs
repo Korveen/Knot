@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>Rename-safe reference limited to Blackboard variables of type <typeparamref name="T"/>.</summary>
     [Serializable]

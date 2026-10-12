@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using XNode;
+using Knot;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     [CustomEditor(typeof(SceneGraph), true)]
     public class SceneGraphEditor : Editor

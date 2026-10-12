@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary> Precaches reflection data in editor so we won't have to do it runtime </summary>
     public static class NodeDataCache

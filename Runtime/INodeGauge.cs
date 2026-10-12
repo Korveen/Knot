@@ -1,4 +1,4 @@
-namespace XNode
+namespace Knot
 {
     public interface INodeGauge<TContext>
     {

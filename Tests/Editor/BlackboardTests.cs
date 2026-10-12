@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace XNode.Tests
+namespace Knot.Tests
 {
     public sealed class BlackboardTests
     {

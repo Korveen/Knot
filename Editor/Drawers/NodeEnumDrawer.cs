@@ -3,9 +3,9 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using XNode;
+using Knot;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     [CustomPropertyDrawer(typeof(NodeEnumAttribute))]
     public class NodeEnumDrawer : PropertyDrawer

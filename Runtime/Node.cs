@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>
     /// Base class for all nodes
     /// </summary>
     /// <example>
-    /// Classes extending this class will be considered as valid nodes by xNode.
+    /// Classes extending this class will be considered as valid nodes by Knot.
     /// <code>
     /// [System.Serializable]
     /// public class Adder : Node {
@@ -395,7 +395,7 @@ namespace XNode
         /// <param name="port">The requested port.</param>
         public virtual object GetValue(NodePort port)
         {
-            Debug.LogWarning("No GetValue(NodePort port) override defined for " + GetType());
+            //Debug.LogWarning("No GetValue(NodePort port) override defined for " + GetType());
             return null;
         }
 

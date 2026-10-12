@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>Mutable per-execution values created from a Blackboard definition.</summary>
     public sealed class BlackboardInstance

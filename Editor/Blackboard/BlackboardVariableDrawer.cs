@@ -3,9 +3,9 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
-    [CustomPropertyDrawer(typeof(XNode.BlackboardVariable), true)]
+    [CustomPropertyDrawer(typeof(Knot.BlackboardVariable), true)]
     internal sealed class BlackboardVariableDrawer : PropertyDrawer
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
@@ -17,7 +17,7 @@ namespace XNodeEditor
             header.style.flexDirection = FlexDirection.Row;
             header.style.alignItems = Align.Center;
 
-            var nameProperty = property.FindPropertyRelative(XNode.BlackboardVariable.NameField);
+            var nameProperty = property.FindPropertyRelative(Knot.BlackboardVariable.NameField);
             if (nameProperty != null)
             {
                 var nameField = new PropertyField(nameProperty, "");
@@ -25,7 +25,7 @@ namespace XNodeEditor
                 header.Add(nameField);
             }
 
-            var variable = property.managedReferenceValue as XNode.BlackboardVariable;
+            var variable = property.managedReferenceValue as Knot.BlackboardVariable;
             if (variable != null)
             {
                 var typeLabel = new Label(BlackboardEditorPanel.TypeLabel(variable.ValueType));
@@ -43,7 +43,7 @@ namespace XNodeEditor
             }
 
             root.Add(header);
-            var defaultValue = property.FindPropertyRelative(XNode.BlackboardVariable<object>.DefaultValueField);
+            var defaultValue = property.FindPropertyRelative(Knot.BlackboardVariable<object>.DefaultValueField);
             if (defaultValue != null)
                 root.Add(new PropertyField(defaultValue, "Default"));
             return root;
@@ -56,8 +56,8 @@ namespace XNodeEditor
             {
                 var line = EditorGUIUtility.singleLineHeight;
                 var y = position.y;
-                var nameProperty = property.FindPropertyRelative(XNode.BlackboardVariable.NameField);
-                var variable = property.managedReferenceValue as XNode.BlackboardVariable;
+                var nameProperty = property.FindPropertyRelative(Knot.BlackboardVariable.NameField);
+                var variable = property.managedReferenceValue as Knot.BlackboardVariable;
                 var nameRect = new Rect(position.x, y, Mathf.Max(36f, position.width - 114f), line);
                 var typeRect = new Rect(nameRect.xMax + 4f, y, 72f, line);
                 var getRect = new Rect(typeRect.xMax + 4f, y, 34f, line);
@@ -71,7 +71,7 @@ namespace XNodeEditor
                         BlackboardEditorPanel.CreateGetter(NodeEditorWindow.Current, variable);
                 }
 
-                var defaultValue = property.FindPropertyRelative(XNode.BlackboardVariable<object>.DefaultValueField);
+                var defaultValue = property.FindPropertyRelative(Knot.BlackboardVariable<object>.DefaultValueField);
                 if (defaultValue == null) return;
                 y += line + 2f;
                 EditorGUI.PropertyField(
@@ -89,7 +89,7 @@ namespace XNodeEditor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var height = EditorGUIUtility.singleLineHeight + 4f;
-            var defaultValue = property.FindPropertyRelative(XNode.BlackboardVariable<object>.DefaultValueField);
+            var defaultValue = property.FindPropertyRelative(Knot.BlackboardVariable<object>.DefaultValueField);
             if (defaultValue != null)
                 height += EditorGUI.GetPropertyHeight(defaultValue, true) + 2f;
             return height;

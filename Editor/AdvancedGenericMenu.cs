@@ -5,7 +5,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using static UnityEditor.GenericMenu;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     public class AdvancedGenericMenu : AdvancedDropdown
     {

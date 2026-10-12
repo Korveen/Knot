@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using XNode;
+using Knot;
 
 [CreateAssetMenu]
 public class #SCRIPTNAME# : NodeGraph { 

@@ -5,15 +5,15 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using XNode;
+using Knot;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     public static class NodeUiUtility
     {
         private static readonly HashSet<string> DefaultExcludes = new HashSet<string>
         {
-            "m_Script", nameof(XNode.Node.Graph), nameof(XNode.Node.Position), XNode.Node.PortsField, XNode.Node.NodeIdField
+            "m_Script", nameof(Knot.Node.Graph), nameof(Knot.Node.Position), Knot.Node.PortsField, Knot.Node.NodeIdField
         };
 
         public static void BindSerializedFields(

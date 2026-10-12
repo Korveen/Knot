@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 
-namespace XNode
+namespace Knot
 {
-    /// <summary>Resolves runtime services without coupling xNode to a DI container.</summary>
+    /// <summary>Resolves runtime services without coupling Knot to a DI container.</summary>
     public interface IExecutionServiceResolver
     {
         object GetService(Type serviceType);

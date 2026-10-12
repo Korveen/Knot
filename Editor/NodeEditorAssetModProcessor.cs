@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.IO;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     /// <summary> Deals with modified assets </summary>
     internal class NodeEditorAssetModProcessor : AssetModificationProcessor
@@ -25,7 +25,7 @@ namespace XNodeEditor
             var script = obj as MonoScript;
             var scriptType = script.GetClass();
             if (scriptType == null ||
-                (scriptType != typeof(XNode.Node) && !scriptType.IsSubclassOf(typeof(XNode.Node))))
+                (scriptType != typeof(Knot.Node) && !scriptType.IsSubclassOf(typeof(Knot.Node))))
                 return AssetDeleteResult.DidNotDelete;
 
             // Find all ScriptableObjects using this script
@@ -36,7 +36,7 @@ namespace XNodeEditor
                 var objs = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetpath);
                 for (var k = 0; k < objs.Length; k++)
                 {
-                    var node = objs[k] as XNode.Node;
+                    var node = objs[k] as Knot.Node;
                     if (node.GetType() == scriptType)
                     {
                         if (node != null && node.Graph != null)
@@ -60,12 +60,12 @@ namespace XNodeEditor
         private static void OnReloadEditor()
         {
             // Find all NodeGraph assets
-            var guids = AssetDatabase.FindAssets("t:" + typeof(XNode.NodeGraph));
+            var guids = AssetDatabase.FindAssets("t:" + typeof(Knot.NodeGraph));
             for (var i = 0; i < guids.Length; i++)
             {
                 var assetpath = AssetDatabase.GUIDToAssetPath(guids[i]);
                 var graph =
-                    AssetDatabase.LoadAssetAtPath(assetpath, typeof(XNode.NodeGraph)) as XNode.NodeGraph;
+                    AssetDatabase.LoadAssetAtPath(assetpath, typeof(Knot.NodeGraph)) as Knot.NodeGraph;
                 graph.Nodes.RemoveAll(x => x == null); //Remove null items
                 var objs = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetpath);
                 // Ensure that all sub node assets are present in the graph node list
@@ -73,7 +73,7 @@ namespace XNodeEditor
                 {
                     // Ignore null sub assets
                     if (objs[u] == null) continue;
-                    if (!graph.Nodes.Contains(objs[u] as XNode.Node)) graph.Nodes.Add(objs[u] as XNode.Node);
+                    if (!graph.Nodes.Contains(objs[u] as Knot.Node)) graph.Nodes.Add(objs[u] as Knot.Node);
                 }
             }
         }

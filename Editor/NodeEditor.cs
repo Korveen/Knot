@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     /// <summary> Base class to derive custom Node editors from. Use this to create your own custom inspectors and editors for your nodes. </summary>
-    [CustomNodeEditor(typeof(XNode.Node))]
-    public class NodeEditor : Internal.NodeEditorBase<NodeEditor, NodeEditor.CustomNodeEditorAttribute, XNode.Node>
+    [CustomNodeEditor(typeof(Knot.Node))]
+    public class NodeEditor : Internal.NodeEditorBase<NodeEditor, NodeEditor.CustomNodeEditorAttribute, Knot.Node>
     {
         /// <summary> Fires every whenever a node was modified through the editor </summary>
-        public static Action<XNode.Node> OnUpdateNode;
+        public static Action<Knot.Node> OnUpdateNode;
 
-        public static readonly Dictionary<XNode.NodePort, Vector2> PortPositions = new Dictionary<XNode.NodePort, Vector2>();
+        public static readonly Dictionary<Knot.NodePort, Vector2> PortPositions = new Dictionary<Knot.NodePort, Vector2>();
 
         public virtual void BuildHeader(UI.NodeView view)
         {

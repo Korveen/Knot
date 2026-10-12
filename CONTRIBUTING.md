@@ -1,13 +1,13 @@
-## Contributing to xNode
+## Contributing to Knot
 💙Thank you for taking the time to contribute💙
 
 ## Pull Requests
 Try to keep your pull requests relevant, neat, and manageable. If you are adding multiple features, split them into separate PRs.
 These are the main points to follow:
 
-1) Use formatting which is consistent with the rest of xNode base (see below)
+1) Use formatting which is consistent with the rest of Knot base (see below)
 2) Keep _one feature_ per PR (see below)
-3) xNode aims to be compatible with C# 4.x, do not use new language features
+3) Knot aims to be compatible with C# 4.x, do not use new language features
 4) Avoid including irellevant whitespace or formatting changes
 5) Comment your code
 6) Spell check your code / comments
@@ -15,7 +15,7 @@ These are the main points to follow:
 8) Use english language
 
 ## New features
-xNode aims to be simple and extendible, not trying to fix all of Unity's shortcomings.
+Knot aims to be simple and extendible, not trying to fix all of Unity's shortcomings.
 
 Approved changes might be rejected if bundled with rejected changes, so keep PRs as separate as possible.
 

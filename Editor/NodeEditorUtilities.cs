@@ -8,9 +8,9 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
-    /// <summary> A set of editor-only utilities and extensions for xNode </summary>
+    /// <summary> A set of editor-only utilities and extensions for Knot </summary>
     public static class NodeEditorUtilities
     {
         /// <summary>C#'s Script Icon [The one MonoBhevaiour Scripts have].</summary>
@@ -113,7 +113,7 @@ namespace XNodeEditor
             return true;
         }
 
-        public static bool TryGetGraphPortColor(XNode.NodePort port, out Color color)
+        public static bool TryGetGraphPortColor(Knot.NodePort port, out Color color)
         {
             color = default;
             if (port == null) return false;
@@ -121,7 +121,7 @@ namespace XNodeEditor
             {
                 var field = port.Node.GetType().GetFieldInfo(port.FieldName);
                 var fieldAttr = field != null
-                    ? field.GetCustomAttribute<XNode.Node.GraphPortColorAttribute>(true)
+                    ? field.GetCustomAttribute<Knot.Node.GraphPortColorAttribute>(true)
                     : null;
                 if (fieldAttr != null)
                 {
@@ -133,7 +133,7 @@ namespace XNodeEditor
             var type = port.ValueType;
             while (type != null && type != typeof(object))
             {
-                var typeAttr = type.GetCustomAttribute<XNode.Node.GraphPortColorAttribute>(false);
+                var typeAttr = type.GetCustomAttribute<Knot.Node.GraphPortColorAttribute>(false);
                 if (typeAttr != null)
                 {
                     color = typeAttr.Color;
@@ -196,15 +196,15 @@ namespace XNodeEditor
         /// <param name="direction"></param>
         /// <returns>True if NodeType has some port with value type compatible</returns>
         public static bool HasCompatiblePortType(Type nodeType, Type compatibleType,
-            XNode.NodePort.IO direction = XNode.NodePort.IO.Input)
+            Knot.NodePort.IO direction = Knot.NodePort.IO.Input)
         {
-            var findType = typeof(XNode.Node.InputAttribute);
-            if (direction == XNode.NodePort.IO.Output)
-                findType = typeof(XNode.Node.OutputAttribute);
+            var findType = typeof(Knot.Node.InputAttribute);
+            if (direction == Knot.NodePort.IO.Output)
+                findType = typeof(Knot.Node.OutputAttribute);
 
             //Get All fields from node type and we go filter only field with portAttribute.
             //This way is possible to know the values of the all ports and if have some with compatible value tue
-            foreach (var f in XNode.NodeDataCache.GetNodeFields(nodeType))
+            foreach (var f in Knot.NodeDataCache.GetNodeFields(nodeType))
             {
                 var portAttribute = f.GetCustomAttributes(findType, false).FirstOrDefault();
                 if (portAttribute != null)
@@ -227,7 +227,7 @@ namespace XNodeEditor
         /// <param name="direction"></param>
         /// <returns>Return Only Node Types with ports compatible, or an empty list</returns>
         public static List<Type> GetCompatibleNodesTypes(Type[] nodeTypes, Type compatibleType,
-            XNode.NodePort.IO direction = XNode.NodePort.IO.Input)
+            Knot.NodePort.IO direction = Knot.NodePort.IO.Input)
         {
             //Result List
             var filteredTypes = new List<Type>();
@@ -326,13 +326,13 @@ namespace XNodeEditor
         }
 
         /// <summary>Creates a new C# Class.</summary>
-        [MenuItem("Assets/Create/xNode/Node C# Script", false, 89)]
+        [MenuItem("Assets/Create/Knot/Node C# Script", false, 89)]
         private static void CreateNode()
         {
-            var guids = AssetDatabase.FindAssets("xNode_NodeTemplate.cs");
+            var guids = AssetDatabase.FindAssets("Knot_NodeTemplate.cs");
             if (guids.Length == 0)
             {
-                Debug.LogWarning("xNode_NodeTemplate.cs.txt not found in asset database");
+                Debug.LogWarning("Knot_NodeTemplate.cs.txt not found in asset database");
                 return;
             }
 
@@ -344,13 +344,13 @@ namespace XNodeEditor
         }
 
         /// <summary>Creates a new C# Class.</summary>
-        [MenuItem("Assets/Create/xNode/NodeGraph C# Script", false, 89)]
+        [MenuItem("Assets/Create/Knot/NodeGraph C# Script", false, 89)]
         private static void CreateGraph()
         {
-            var guids = AssetDatabase.FindAssets("xNode_NodeGraphTemplate.cs");
+            var guids = AssetDatabase.FindAssets("Knot_NodeGraphTemplate.cs");
             if (guids.Length == 0)
             {
-                Debug.LogWarning("xNode_NodeGraphTemplate.cs.txt not found in asset database");
+                Debug.LogWarning("Knot_NodeGraphTemplate.cs.txt not found in asset database");
                 return;
             }
 

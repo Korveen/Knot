@@ -1,7 +1,7 @@
 ﻿{
-    "name": "XNodeEditor",
+    "name": "Knot.Editor",
     "references": [
-        "XNode"
+        "Knot"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

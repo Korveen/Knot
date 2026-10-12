@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>Serialized definition and default value of one Blackboard variable.</summary>
     [Serializable]

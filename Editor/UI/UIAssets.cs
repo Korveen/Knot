@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace XNodeEditor.UI
+namespace Knot.Editor.UI
 {
     internal static class UIAssets
     {
@@ -30,7 +30,7 @@ namespace XNodeEditor.UI
                 return AssetDatabase.LoadAssetAtPath<T>(path);
             }
 
-            Debug.LogError($"xNode UITK asset '{fileName}' was not found under Editor/Ui.");
+            Debug.LogError($"Knot UITK asset '{fileName}' was not found under Editor/Ui.");
             return null;
         }
     }

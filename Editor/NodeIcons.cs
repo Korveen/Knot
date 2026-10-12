@@ -4,9 +4,9 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
-    /// <summary> Loads node header icons named by <see cref="XNode.Node.NodeIconAttribute"/> from any NodeIcons folder. </summary>
+    /// <summary> Loads node header icons named by <see cref="Knot.Node.NodeIconAttribute"/> from any NodeIcons folder. </summary>
     public static class NodeIcons
     {
         private const string FolderToken = "/NodeIcons/";

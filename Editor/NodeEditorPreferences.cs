@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace XNodeEditor
+namespace Knot.Editor
 {
     public enum NoodlePath
     {
@@ -22,9 +22,9 @@ namespace XNodeEditor
 
     public static class NodeEditorPreferences
     {
-        public const string SharedKey = "xNode.Settings";
-        public const string BehaviourTreeKey = "xNode.Settings.BehaviourTree";
-        public const string FlowKey = "xNode.Settings.Flow";
+        public const string SharedKey = "Knot.Settings";
+        public const string BehaviourTreeKey = "Knot.Settings.BehaviourTree";
+        public const string FlowKey = "Knot.Settings.Flow";
 
         public static class Slots
         {
@@ -226,7 +226,7 @@ namespace XNodeEditor
             return settings != null ? settings.GetSlot(slot, fallback) : fallback;
         }
 
-        public static Color ResolvePortColor(XNode.NodePort port, GraphTypeSettings settings, bool execution)
+        public static Color ResolvePortColor(Knot.NodePort port, GraphTypeSettings settings, bool execution)
         {
             if (NodeEditorUtilities.TryGetGraphPortColor(port, out var attributed)) return attributed;
             if (execution)
@@ -404,11 +404,11 @@ namespace XNodeEditor
         }
 
         [SettingsProvider]
-        static SettingsProvider CreateXNodeProvider()
+        static SettingsProvider CreateKnotProvider()
         {
-            return new SettingsProvider("Preferences/XNode", SettingsScope.User)
+            return new SettingsProvider("Preferences/Knot", SettingsScope.User)
             {
-                label = "XNode",
+                label = "Knot",
                 keywords = new HashSet<string> {"xnode", "node", "graph", "grid", "snap", "window"},
                 guiHandler = _ => DrawSharedGUI()
             };
@@ -417,7 +417,7 @@ namespace XNodeEditor
         [SettingsProvider]
         static SettingsProvider CreateBehaviourTreeProvider()
         {
-            return new SettingsProvider("Preferences/XNode/Behaviour Tree", SettingsScope.User)
+            return new SettingsProvider("Preferences/Knot/Behaviour Tree", SettingsScope.User)
             {
                 label = "Behaviour Tree",
                 keywords = new HashSet<string> {"xnode", "behaviour", "tree", "noodle", "port"},
@@ -428,7 +428,7 @@ namespace XNodeEditor
         [SettingsProvider]
         static SettingsProvider CreateFlowGraphProvider()
         {
-            return new SettingsProvider("Preferences/XNode/Flow Graph", SettingsScope.User)
+            return new SettingsProvider("Preferences/Knot/Flow Graph", SettingsScope.User)
             {
                 label = "Flow Graph",
                 keywords = new HashSet<string> {"xnode", "flow", "noodle", "port"},
@@ -498,7 +498,7 @@ namespace XNodeEditor
             }
 
             EditorGUILayout.Space(8);
-            if (GUILayout.Button("Reset XNode Defaults", GUILayout.Width(180)))
+            if (GUILayout.Button("Reset Knot Defaults", GUILayout.Width(180)))
                 ResetShared();
         }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace XNode
+namespace Knot
 {
     /// <summary>Per-runner override of one Blackboard variable default.</summary>
     [Serializable]
