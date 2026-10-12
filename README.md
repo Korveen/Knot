@@ -4,7 +4,7 @@ Unity package for custom node graphs. Runtime stays small. The editor is UITK (`
 
 Use it as a base for state machines, dialogue, behaviour trees, or any graph you own. It is not a complete game framework.
 
-Knot started as a fork of [Siccity/xNode](https://github.com/Siccity/xNode) by Thor Brigsted. Original xNode is MIT, copyright (c) 2017 Thor Brigsted. Do not install Siccity/xNode, OpenUPM `com.github.siccity.xnode`, or `com.github.siccity.xnodegroups`.
+Part of the runtime comes from [Siccity/xNode](https://github.com/Siccity/xNode) by Thor Brigsted, MIT, copyright (c) 2017.
 
 ## What it contains
 
@@ -53,7 +53,7 @@ public class MathNode : Node {
     public override object GetValue(NodePort port) {
         float a = GetInputValue<float>("a", this.a);
         float b = GetInputValue<float>("b", this.b);
-        if (port.fieldName != "result") return 0f;
+        if (port.FieldName != "result") return 0f;
         switch (mathType) {
             case MathType.Subtract: return a - b;
             case MathType.Multiply: return a * b;
@@ -102,4 +102,4 @@ public sealed class GetActorBlackboardVariableNode : GetBlackboardVariableNode<A
 
 ## License
 
-MIT. See [LICENSE.md](LICENSE.md). The copyright notice in that file stays.
+MIT. See [LICENSE.md](LICENSE.md).

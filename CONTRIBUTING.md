@@ -1,38 +1,40 @@
-## Contributing to Knot
-💙Thank you for taking the time to contribute💙
-
-## Pull Requests
-Try to keep your pull requests relevant, neat, and manageable. If you are adding multiple features, split them into separate PRs.
-These are the main points to follow:
-
-1) Use formatting which is consistent with the rest of Knot base (see below)
-2) Keep _one feature_ per PR (see below)
-3) Knot aims to be compatible with C# 4.x, do not use new language features
-4) Avoid including irellevant whitespace or formatting changes
-5) Comment your code
-6) Spell check your code / comments
-7) Use concrete types, not *var*
-8) Use english language
-
-## New features
-Knot aims to be simple and extendible, not trying to fix all of Unity's shortcomings.
-
-Approved changes might be rejected if bundled with rejected changes, so keep PRs as separate as possible.
-
-If your feature aims to cover something not related to editing nodes, it generally won't be accepted. If in doubt, ask on the Discord channel.
-
-## Coding conventions
-Using consistent formatting is key to having a clean git history. Skim through the code and you'll get the hang of it quickly.
-* Methods, Types and properties PascalCase
-* Variables camelCase
-* Public methods XML commented. Params described if not obvious
-* Explicit usage of brackets when doing multiple math operations on the same line
+# Contributing
 
 ## Formatting
-I use VSCode with the C# FixFormat extension and the following setting overrides:
-```json
-"csharpfixformat.style.spaces.beforeParenthesis": false,
-"csharpfixformat.style.indent.regionIgnored": true
-```
-* Open braces on same line as condition
-* 4 spaces for indentation.
+
+* Indent with 4 spaces. Do not use tabs.
+* Put the opening brace on the next line.
+* Put `using` directives at the top of the file, outside the namespace.
+* Use a block namespace (`namespace Knot { }`). Do not use a file-scoped namespace.
+* Leave a file's line endings alone. Do not rewrite a file to change a few lines.
+
+## Language
+
+The package lists Unity 2021.3, which compiles C# 9. Stay inside that. A newer editor in one game does not raise this floor.
+
+Use these when they shorten the code and the type stays obvious:
+
+* `var`
+* target-typed `new()`
+* expression-bodied members for a single expression
+* `switch` expressions and property patterns
+* `nameof`
+
+Do not use C# 10 or later: file-scoped namespaces, global usings, file-local types, raw string literals, required members, primary constructors, collection expressions.
+
+Do not add `#nullable`. The assembly does not enable nullable reference types.
+
+For `UnityEngine.Object`, compare with `== null` and `!= null`. The `is null` pattern does not use Unity's overloaded equality and treats a destroyed object as alive.
+
+## Names
+
+* Runtime types live in `Knot`, assembly `Knot`. Editor types live in `Knot.Editor`, assembly `Knot.Editor`.
+* Public types and members are PascalCase. Private fields are `_camelCase`.
+* A nested type and a member of the enclosing type cannot share a name.
+* Node port fields stay public fields marked `[Input]` or `[Output]`. Other serialized state is `[SerializeField] private`.
+
+## Serialization
+
+* When another assembly looks up a serialized field, the owning type exposes `public const string NameField = nameof(_name);`. Do not pass that name as a string literal.
+* Do not add `FormerlySerializedAs`. Renaming a serialized field means migrating the YAML.
+* Do not rename a `Resources.Load` path or the file it loads unless the asset is renamed in the same change.
