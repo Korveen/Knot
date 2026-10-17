@@ -745,3 +745,118 @@
     border-left-color: #e6ad2e;
     color: #ffe39e;
 }
+
+.search-popup-catcher {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.search-popup {
+    position: absolute;
+    width: 280px;
+    max-height: 360px;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: var(--xn-panel);
+    border-width: 1px;
+    border-color: var(--xn-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.search-popup-title {
+    padding: 6px 8px 2px 8px;
+    margin: 0;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--xn-text);
+}
+
+.search-popup-field {
+    margin: 4px 6px 6px 6px;
+    flex-shrink: 0;
+}
+
+.search-popup-field > .unity-base-field__label,
+.search-popup-field > .unity-label {
+    display: none;
+    min-width: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.search-popup-list {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 48px;
+    margin-bottom: 4px;
+}
+
+.search-popup-foldout {
+    margin: 0;
+    padding: 0;
+}
+
+.search-popup-foldout > .unity-foldout__toggle {
+    margin: 0;
+    padding: 1px 4px;
+    min-height: 20px;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    border-width: 0;
+}
+
+.search-popup-foldout > .unity-foldout__toggle:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.search-popup-foldout > .unity-foldout__content {
+    margin-left: 12px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.search-popup-empty {
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--xn-muted);
+}
+
+.search-popup-row {
+    padding: 2px 8px 2px 18px;
+    margin: 0;
+    flex-direction: row;
+    min-height: 20px;
+    overflow: visible;
+}
+
+.search-popup-row-label {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.search-popup-row:hover,
+.search-popup-row.active {
+    background-color: var(--xn-accent);
+}
+
+.search-popup-row.active > .search-popup-row-label,
+.search-popup-row:hover > .search-popup-row-label {
+    color: #ffffff;
+}
+
+.search-popup-sticky {
+    border-top-width: 1px;
+    border-top-color: var(--xn-border);
+    margin-top: 4px;
+    padding-left: 10px;
+}

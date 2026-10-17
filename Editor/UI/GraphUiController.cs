@@ -65,6 +65,7 @@ namespace Knot.Editor.UI
         private Vector2 _resizeOrigin;
         private int _resizeWidth;
         private int _resizeHeight;
+        private Vector2 _lastPointer;
 
         private enum GroupEdge
         {
@@ -181,6 +182,7 @@ namespace Knot.Editor.UI
 
         public void Dispose()
         {
+            SearchPopup.Close();
             EditorApplication.update -= RefreshRuntime;
             Undo.undoRedoPerformed -= Rebuild;
             Selection.selectionChanged -= RefreshSelection;
@@ -642,26 +644,38 @@ namespace Knot.Editor.UI
 
             Rebuild();
             if (showCreate)
-                ShowCreateMenu(menuPos, autoConnect);
+                ShowCreatePopup(menuPos, autoConnect, false);
         }
 
         private PortView FindPortAt(Vector2 panelPosition, NodePort ignore = null)
         {
-            PortView best = null;
+            PortView bestHit = null;
+            var bestArea = float.PositiveInfinity;
+            PortView bestNear = null;
             var bestDist = 22f * 22f;
             foreach (var pair in Ports)
             {
                 if (pair.Value == null || pair.Key == ignore) continue;
+                var bound = pair.Value.worldBound;
+                if (bound.width >= 2f && bound.height >= 2f && bound.Contains(panelPosition))
+                {
+                    var area = bound.width * bound.height;
+                    if (area >= bestArea) continue;
+                    bestArea = area;
+                    bestHit = pair.Value;
+                    continue;
+                }
+
                 var center = pair.Value.HasValidLayout
-                    ? pair.Value.worldBound.center
+                    ? bound.center
                     : pair.Value.NodeView.LocalToWorld(pair.Value.LocalOffsetOnNode);
                 var dist = (center - panelPosition).sqrMagnitude;
                 if (dist >= bestDist) continue;
                 bestDist = dist;
-                best = pair.Value;
+                bestNear = pair.Value;
             }
 
-            return best;
+            return bestHit != null ? bestHit : bestNear;
         }
 
         private NodeView FindNodeAt(Vector2 panelPosition)
@@ -734,6 +748,7 @@ namespace Knot.Editor.UI
             });
             _viewport.RegisterCallback<PointerMoveEvent>(evt =>
             {
+                _lastPointer = evt.position;
                 UpdateCursorLabel(evt.position);
                 if (_panning && _viewport.HasPointerCapture(evt.pointerId))
                 {
@@ -791,7 +806,11 @@ namespace Knot.Editor.UI
             });
             _root.RegisterCallback<KeyDownEvent>(OnGraphKeyDown, TrickleDown.TrickleDown);
             _viewport.RegisterCallback<PointerMoveEvent>(
-                evt => UpdateCursorLabel(evt.position),
+                evt =>
+                {
+                    _lastPointer = evt.position;
+                    UpdateCursorLabel(evt.position);
+                },
                 TrickleDown.TrickleDown);
             _viewport.RegisterCallback<GeometryChangedEvent>(_ => CullNodes());
         }
@@ -801,6 +820,17 @@ namespace Knot.Editor.UI
             if (IsEditingText(evt.target) ||
                 IsEditingText(_root.focusController?.focusedElement))
             {
+                return;
+            }
+
+            if (evt.keyCode == KeyCode.Space)
+            {
+                var pos = _viewport.worldBound.Contains(_lastPointer)
+                    ? _lastPointer
+                    : _viewport.worldBound.center;
+                ShowCreatePopup(pos, null, true);
+                evt.StopPropagation();
+                evt.PreventDefault();
                 return;
             }
 
@@ -1218,51 +1248,14 @@ namespace Knot.Editor.UI
                 return;
             }
 
-            FillCreateMenu(evt.menu, panelPos);
+            evt.PreventDefault();
             evt.StopPropagation();
+            ShowCreatePopup(panelPos, null, true);
         }
 
-        private void FillCreateMenu(DropdownMenu menu, Vector2 panelPos)
+        private List<(string path, Type type, int order)> GetCreateEntries(Type compatibleType)
         {
-            if (Window.GraphEditor == null) return;
-            var grid = ScreenToGrid(panelPos);
-            SplitCreateEntries(GetCreateEntries(null), out var groups, out var rest);
-            foreach (var entry in groups)
-            {
-                var captured = entry.type;
-                menu.AppendAction(entry.path, _ =>
-                {
-                    Window.GraphEditor.CreateNode(captured, grid);
-                    Rebuild();
-                });
-            }
-
-            if (groups.Count > 0 && rest.Count > 0) menu.AppendSeparator();
-            var any = groups.Count > 0;
-            foreach (var entry in rest)
-            {
-                var captured = entry.type;
-                menu.AppendAction(entry.path, _ =>
-                {
-                    Window.GraphEditor.CreateNode(captured, grid);
-                    Rebuild();
-                });
-                any = true;
-            }
-
-            if (any) menu.AppendSeparator();
-            var canPaste = NodeEditorWindow.CopyBuffer != null && NodeEditorWindow.CopyBuffer.Length > 0;
-            menu.AppendAction("Paste", _ =>
-            {
-                Window.PasteNodes(grid);
-                Rebuild();
-            }, canPaste ? DropdownMenuAction.AlwaysEnabled : DropdownMenuAction.AlwaysDisabled);
-            menu.AppendAction("Preferences", _ => NodeEditorReflection.OpenPreferences());
-        }
-
-        private List<(string path, Type type)> GetCreateEntries(Type compatibleType)
-        {
-            var result = new List<(string path, Type type)>();
+            var result = new List<(string path, Type type, int order)>();
             if (Window.GraphEditor == null) return result;
             IEnumerable<Type> types = NodeEditorReflection.NodeTypes;
             if (compatibleType != null && NodeEditorPreferences.GetSettings().CreateFilter)
@@ -1273,47 +1266,36 @@ namespace Knot.Editor.UI
                     NodePort.IO.Input);
             }
 
-            foreach (var type in types.OrderBy(t => Window.GraphEditor.GetNodeMenuOrder(t)))
+            foreach (var type in types)
             {
                 var path = Window.GraphEditor.GetNodeMenuName(type);
                 if (string.IsNullOrEmpty(path)) continue;
-                result.Add((path, type));
+                result.Add((path, type, Window.GraphEditor.GetNodeMenuOrder(type)));
             }
 
+            result.Sort((a, b) =>
+            {
+                var order = a.order.CompareTo(b.order);
+                return order != 0
+                    ? order
+                    : string.Compare(a.path, b.path, StringComparison.OrdinalIgnoreCase);
+            });
             return result;
         }
 
-        private static void SplitCreateEntries(
-            List<(string path, Type type)> entries,
-            out List<(string path, Type type)> groups,
-            out List<(string path, Type type)> rest)
+        private void ShowCreatePopup(Vector2 worldPos, NodePort output, bool includePaste)
         {
-            groups = new List<(string path, Type type)>();
-            rest = new List<(string path, Type type)>();
+            if (Window.GraphEditor == null) return;
+            var grid = ScreenToGrid(worldPos);
+            var entries = GetCreateEntries(output != null ? output.ValueType : null);
+            var items = new List<SearchPopup.Item>(entries.Count);
             for (var i = 0; i < entries.Count; i++)
             {
-                if (typeof(GroupNode).IsAssignableFrom(entries[i].type)) groups.Add(entries[i]);
-                else rest.Add(entries[i]);
-            }
-        }
-
-        private void ShowCreateMenu(Vector2 panelPos, NodePort output)
-        {
-            var menu = new GenericMenu();
-            var grid = ScreenToGrid(panelPos);
-            var capturedOutput = output;
-            SplitCreateEntries(
-                GetCreateEntries(output != null ? output.ValueType : null),
-                out var groups,
-                out var rest);
-            var any = false;
-
-            void AddEntry((string path, Type type) entry)
-            {
-                var capturedType = entry.type;
-                menu.AddItem(new GUIContent(entry.path), false, () =>
+                var type = entries[i].type;
+                var capturedOutput = output;
+                items.Add(new SearchPopup.Item(entries[i].path, () =>
                 {
-                    var node = Window.GraphEditor.CreateNode(capturedType, grid);
+                    var node = Window.GraphEditor.CreateNode(type, grid);
                     if (node != null && capturedOutput != null)
                     {
                         var input = Window.GraphEditor.GetCompatibleInput(capturedOutput, node);
@@ -1321,31 +1303,25 @@ namespace Knot.Editor.UI
                     }
 
                     Rebuild();
-                });
-                any = true;
+                }, entries[i].order));
             }
 
-            for (var i = 0; i < groups.Count; i++) AddEntry(groups[i]);
-            if (groups.Count > 0 && rest.Count > 0) menu.AddSeparator("");
-            for (var i = 0; i < rest.Count; i++) AddEntry(rest[i]);
-            if (!any) return;
-            menu.AddSeparator("");
-            var canPaste = NodeEditorWindow.CopyBuffer != null && NodeEditorWindow.CopyBuffer.Length > 0;
-            if (canPaste)
+            List<SearchPopup.Item> sticky = null;
+            if (includePaste &&
+                NodeEditorWindow.CopyBuffer != null &&
+                NodeEditorWindow.CopyBuffer.Length > 0)
             {
-                menu.AddItem(new GUIContent("Paste"), false, () =>
+                sticky = new List<SearchPopup.Item>
                 {
-                    Window.PasteNodes(grid);
-                    Rebuild();
-                });
-            }
-            else
-            {
-                menu.AddDisabledItem(new GUIContent("Paste"));
+                    new SearchPopup.Item("Paste", () =>
+                    {
+                        Window.PasteNodes(grid);
+                        Rebuild();
+                    })
+                };
             }
 
-            menu.AddItem(new GUIContent("Preferences"), false, () => NodeEditorReflection.OpenPreferences());
-            _root.schedule.Execute(() => menu.DropDown(new Rect(panelPos.x, panelPos.y, 0, 0)));
+            SearchPopup.Show(Window.rootVisualElement, worldPos, items, sticky, "Create Node");
         }
 
         private void FillNodeMenu(DropdownMenu menu, NodeView view)

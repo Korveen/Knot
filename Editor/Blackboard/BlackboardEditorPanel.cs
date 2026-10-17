@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Knot.Editor.UI;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -395,16 +396,20 @@ namespace Knot.Editor
 
             private void ShowAddMenu(VisualElement anchor)
             {
-                var menu = new GenericDropdownMenu();
                 var types = VariableTypes;
+                var items = new List<SearchPopup.Item>(types.Length);
                 for (var i = 0; i < types.Length; i++)
                 {
                     var type = types[i];
                     var label = TypeLabel(ValueTypeOf(type)) ?? type.Name;
-                    menu.AddItem(label, false, () => AddVariable(type, label));
+                    items.Add(new SearchPopup.Item(
+                        label,
+                        () => AddVariable(type, label),
+                        TypeOrderIndex(ValueTypeOf(type))));
                 }
 
-                menu.DropDown(anchor.worldBound, anchor, false);
+                var pos = new Vector2(anchor.worldBound.xMin, anchor.worldBound.yMax);
+                SearchPopup.Show(_window.rootVisualElement, pos, items, null, "Add Variable");
             }
 
             private void AddVariable(Type variableType, string label)

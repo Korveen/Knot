@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Knot;
 #if UNITY_2019_1_OR_NEWER && USE_ADVANCED_GENERIC_MENU
 using GenericMenu = Knot.Editor.AdvancedGenericMenu;
 #endif
@@ -81,17 +82,26 @@ namespace Knot.Editor
             return _nodeWidth.TryGetValue(nodeType, out width);
         }
 
-        private static void CacheAttributes<V, A>(ref Dictionary<Type, V> dict, Func<A, V> getter) where A : Attribute
-        {
-            dict = new Dictionary<Type, V>();
-            for (var i = 0; i < NodeTypes.Length; i++)
-            {
-                var attribs = NodeTypes[i].GetCustomAttributes(typeof(A), true);
-                if (attribs == null || attribs.Length == 0) continue;
-                var attrib = attribs[0] as A;
-                dict.Add(NodeTypes[i], getter(attrib));
-            }
-        }
+		private static void CacheAttributes<V, A>(ref Dictionary<Type, V> dict, Func<A, V> getter) where A : Attribute
+		{
+			dict = new Dictionary<Type, V>();
+			for (var i = 0; i < NodeTypes.Length; i++)
+			{
+				var nodeType = NodeTypes[i];
+				var type = nodeType;
+				while (type != null && typeof(Node).IsAssignableFrom(type))
+				{
+					var attrib = type.GetCustomAttribute<A>(false);
+					if (attrib != null)
+					{
+						dict[nodeType] = getter(attrib);
+						break;
+					}
+
+					type = type.BaseType;
+				}
+			}
+		}
 
         /// <summary> Get FieldInfo of a field, including those that are private and/or inherited </summary>
         public static FieldInfo GetFieldInfo(this Type type, string fieldName)
