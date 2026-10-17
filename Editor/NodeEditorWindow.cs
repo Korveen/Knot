@@ -613,7 +613,13 @@ namespace Knot.Editor
 
         public void AddItemsToMenu(GenericMenu menu)
         {
-            GraphEditor?.AddItemsToMenu(menu);
+            if (GraphEditor != null)
+            {
+                GraphEditor.AddItemsToMenu(menu);
+                menu.AddSeparator("");
+            }
+
+            menu.AddItem(new GUIContent("Preferences"), false, NodeEditorReflection.OpenPreferences);
         }
 
         /// <summary> Repaint all open NodeEditorWindows. </summary>
